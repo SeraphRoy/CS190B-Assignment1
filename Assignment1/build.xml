@@ -1,0 +1,59 @@
+<project name="CS190B" default="compile">
+
+  <property environment="env"/> <!-- load the environment variables -->
+  <property name="build" location="build" />
+  <property name="src" location="src" />
+  <property name="doc" location="javadoc" />
+  <property name="compile.debug" value="true" />
+  <property name="serverclassname" value="ComputerImpl" />
+  
+  <macrodef name="Compile">
+    <attribute name="srcdir" />
+    <attribute name="destdir" />
+    <element name="compileoptions" implicit="true" optional="true" />
+    <sequential>
+      <mkdir dir="@{destdir}" />
+      <depend srcdir="${srcdir}" destdir="${destdir}" />
+      <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="${compile.debug}">
+        <compilerarg value="-Xlint:unchecked" />
+        <!--<compilearg value="-Xlint:deprecation" />-->
+      </javac>
+    </sequential>
+  </macrodef>
+        
+  <target name="compile" description="Compile the program">
+    <Compile srcdir="${src}" destdir="${build}" />
+  </target>
+
+  <target name="runServer" depends="compile" description="run the server">
+    <java classname="${serverclassname}" classpath="${build}/computer" >
+      <jvmarg value="-Djava.security.policy=policy" />
+    </java>
+  </target>
+
+  <target name="runClientMandelbrotSet" depends="compile" description="run mandelbrot set">
+    <java classname="ClientMendelbrotSet" classpath="${build}/clients">
+      <jvmarg value="-Djava.security.policy=policy" />
+    </java>
+  </target>
+  
+  <target name="clean" description="delete unnecessary files and directories">
+    <delete dir="${build}" quiet="true" />
+    <delete dir="${doc}" quiet="true" />
+  </target>
+
+  <target name="javadoc" depends="compile">
+    <delete dir="javadoc" quiet="true" />
+    <javadoc  destdir="tempdoc" author="true" version="true" use="true">
+      <fileset dir="${src}" includes="**/*.java"/>
+    </javadoc>
+    <!-- delete the old javadoc -->
+    <delete quiet="true" dir="${doc}" />
+    <!-- copy everything you just made to the javadoc destination, and then make it readable -->
+    <copy todir="${doc}" >
+      <fileset dir="tempdoc"/>
+    </copy>
+  </target>
+  
+</project>
+

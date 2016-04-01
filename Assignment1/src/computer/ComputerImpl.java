@@ -16,7 +16,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         return t.Execute();
     }
 
-    public void main(String[] args){
+    public static void main(String[] args){
         if (System.getSecurityManger() == null)
             System.setSecurityManger(new SecurityManger());
         try{
