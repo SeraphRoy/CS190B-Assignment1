@@ -23,7 +23,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             Computer c = new ComputerImpl();
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind(Computer.SERVICE_NAME, c);
-            System.out.println("Computer bound");
+            System.out.println("Computer start");
         } catch (Exception e){
             System.err.println("Computer exception:");
             e.printStackTrace();

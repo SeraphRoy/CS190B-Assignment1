@@ -22,8 +22,8 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
         }
 
         ComplexNumber(double real, double imaginary){
-            this.real = real;
-            this.imaginary = imaginary;
+            this.real = real * (edgeLength/nPixels) - Math.abs(lowerLeftX);
+            this.imaginary = imaginary * (edgeLength/nPixels) - Math.abs(lowerLeftY);
         }
 
         ComplexNumber(ComplexNumber n){
@@ -62,11 +62,13 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
                 ComplexNumber current = new ComplexNumber(i, j);
                 while(current.Size() <= 2 && num < iterationLimit){
                     num++;
-                    current = current.Square().Plus(current);
+                    current = current.Square().Plus(new ComplexNumber(i, j));
                 }
+                System.out.print(current.Size() + " ");
                 count[i][j] = num;
                 num = 0;
             }
+            System.out.print("\n");
         }
         return count;
     }
