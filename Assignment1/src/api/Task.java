@@ -1,5 +1,5 @@
 package api;
 
 public interface Task<T>{
-    T Execute();
+    public T Execute();
 }

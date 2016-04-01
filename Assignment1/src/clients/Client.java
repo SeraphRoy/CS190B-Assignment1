@@ -76,7 +76,7 @@ public class Client<T> extends JFrame
     public T runTask() throws RemoteException
     {
         final long taskStartTime = System.nanoTime();
-        final T value = computer.execute( task );
+        final T value = computer.Execute( task );
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( Client.class.getCanonicalName() )
             .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );

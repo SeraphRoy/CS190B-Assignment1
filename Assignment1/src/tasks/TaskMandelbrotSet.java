@@ -2,8 +2,9 @@ package tasks;
 
 import api.Task;
 import java.lang.Math;
+import java.lang.Integer;
 
-public class TaskMandelbrotSet implements Task{
+public class TaskMandelbrotSet implements Task<Integer[][]>{
 
     private double lowerLeftX;
     private double lowerLeftY;
@@ -11,15 +12,49 @@ public class TaskMandelbrotSet implements Task{
     private int nPixels;
     private int iterationLimit;
 
-    TaskMandelbrotSet(double lowerLeftX, double lowerLeftY, double edgeLength, int nPixels, int iterationLimit){
+    private class ComplexNumber{
+        public double real;
+        public double imaginary;
+
+        ComplexNumber(){
+            real = 0;
+            imaginary = 0;
+        }
+
+        ComplexNumber(double real, double imaginary){
+            this.real = real;
+            this.imaginary = imaginary;
+        }
+
+        ComplexNumber(ComplexNumber n){
+            this.real = n.real;
+            this.imaginary = n.imaginary;
+        }
+
+        public ComplexNumber Plus(ComplexNumber n){
+            return new ComplexNumber(this.real + n.real, this.imaginary + n.imaginary);
+        }
+
+        public ComplexNumber Square(){
+            return new ComplexNumber(Math.pow(this.real, 2) - Math.pow(this.imaginary, 2), 2 * this.real * this.imaginary);
+        }
+
+        public double Size(){
+            return Math.hypot(this.real, this.imaginary);
+        }
+
+    }
+
+
+    public TaskMandelbrotSet(double lowerLeftX, double lowerLeftY, double edgeLength, int nPixels, int iterationLimit){
         this.lowerLeftX = lowerLeftX;
         this.lowerLeftY = lowerLeftY;
         this.edgeLength = edgeLength;
         this.nPixels = nPixels;
         this.iterationLimit = iterationLimit;
     }
-    Interger[][] Execute(){
-        Interger[][] count = new Interger[nPixels][nPixels];
+    public Integer[][] Execute(){ // 
+        Integer[][] count = new Integer[nPixels][nPixels];
         int num = 0;
 
         for(int i = 0; i < nPixels; i ++){
@@ -33,39 +68,7 @@ public class TaskMandelbrotSet implements Task{
                 num = 0;
             }
         }
-
+        return count;
     }
 }
 
-public class ComplexNumber{
-    public double real;
-    public double imaginary;
-
-    ComplexNumber(){
-        real = 0;
-        imaginary = 0;
-    }
-
-    ComplexNumber(double real, double imaginary){
-        this.real = real;
-        this.imaginary = imaginary;
-    }
-
-    ComplexNumber(ComplexNumber n){
-        this.real = n.real;
-        this.imaginary = n.imaginary;
-    }
-
-    public ComplexNumber Plus(ComplexNumber n){
-        return new ComplexNumber(this.real + n.real, this.imaginary + n.imaginary);
-    }
-
-    public ComplexNumber Square(){
-        return new ComplexNumber(this.real ^ 2 - this.imaginary ^ 2, 2 * this.real * this.imaginary);
-    }
-
-    public double Size(){
-        return Math.hypot(this.real, this.imaginary);
-    }
-
-}

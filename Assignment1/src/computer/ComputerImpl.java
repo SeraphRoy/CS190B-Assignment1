@@ -9,16 +9,16 @@ import api.Computer;
 import api.Task;
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
-    ComputerImpl() throws RemoteException;
+    public ComputerImpl() throws RemoteException{}
 
     @Override
-    <T> T Execute(Task<T> t){
+    public <T> T Execute(Task<T> t){
         return t.Execute();
     }
 
     public static void main(String[] args){
-        if (System.getSecurityManger() == null)
-            System.setSecurityManger(new SecurityManger());
+        if (System.getSecurityManager() == null)
+            System.setSecurityManager(new SecurityManager());
         try{
             Computer c = new ComputerImpl();
             Registry registry = LocateRegistry.createRegistry(1099);
