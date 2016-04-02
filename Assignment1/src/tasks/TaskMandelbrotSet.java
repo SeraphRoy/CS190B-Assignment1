@@ -37,8 +37,11 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
         }
 
         public void Square(){
-            this.real = Math.pow(this.real, 2) - Math.pow(this.imaginary, 2);
-            this.imaginary = 2 * this.real * this.imaginary;
+            double real = this.real;
+            double imaginary = this.imaginary;
+
+            this.real = Math.pow(real, 2) - Math.pow(imaginary, 2);
+            this.imaginary = 2 * real * imaginary;
         }
 
         public double Size(){
@@ -55,7 +58,7 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
         this.nPixels = nPixels;
         this.iterationLimit = iterationLimit;
     }
-    public Integer[][] Execute(){ // 
+    public Integer[][] Execute(){
         Integer[][] count = new Integer[nPixels][nPixels];
         int num = 0;
         for(int i = 0; i < nPixels; i ++){
