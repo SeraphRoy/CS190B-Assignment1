@@ -31,12 +31,14 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
             this.imaginary = n.imaginary;
         }
 
-        public ComplexNumber Plus(ComplexNumber n){
-            return new ComplexNumber(this.real + n.real, this.imaginary + n.imaginary);
+        public void Plus(ComplexNumber n){
+            this.real += n.real;
+            this.imaginary += n.imaginary;
         }
 
-        public ComplexNumber Square(){
-            return new ComplexNumber(Math.pow(this.real, 2) - Math.pow(this.imaginary, 2), 2 * this.real * this.imaginary);
+        public void Square(){
+            this.real = Math.pow(this.real, 2) - Math.pow(this.imaginary, 2);
+            this.imaginary = 2 * this.real * this.imaginary;
         }
 
         public double Size(){
@@ -56,19 +58,19 @@ public class TaskMandelbrotSet implements Task<Integer[][]>{
     public Integer[][] Execute(){ // 
         Integer[][] count = new Integer[nPixels][nPixels];
         int num = 0;
-
         for(int i = 0; i < nPixels; i ++){
             for(int j = 0; j < nPixels; j++){
                 ComplexNumber current = new ComplexNumber(i, j);
                 while(current.Size() <= 2 && num < iterationLimit){
-                    num++;
-                    current = current.Square().Plus(new ComplexNumber(i, j));
+                    num += 1;
+                    current.Square();
+                    current.Plus(new ComplexNumber(i, j));;
                 }
-                System.out.print(current.Size() + " ");
                 count[i][j] = num;
+                //System.out.print(num + " ");
                 num = 0;
             }
-            System.out.print("\n");
+            //System.out.print("\n");
         }
         return count;
     }
