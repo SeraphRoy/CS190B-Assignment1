@@ -36,7 +36,13 @@
       <jvmarg value="-Djava.security.policy=policy" />
     </java>
   </target>
-  
+
+    <target name="runClientEuclideanTsp" depends="compile" description="run euclidean tsp">
+    <java classname="clients.ClientEuclideanTsp" classpath="${build}" fork="true">
+      <jvmarg value="-Djava.security.policy=policy" />
+    </java>
+  </target>
+
   <target name="clean" description="delete unnecessary files and directories">
     <delete dir="${build}" quiet="true" />
     <delete dir="${doc}" quiet="true" />
