@@ -4,7 +4,7 @@ import api.Task;
 import java.util.List;
 import java.util.ArrayList;
 
-public class TaskEuclideanTsp implements Task<List<Integer>>{
+public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializable{
     private double[][] cityCo;
 
     public TaskEuclideanTsp(double[][] map){

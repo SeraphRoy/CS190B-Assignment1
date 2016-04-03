@@ -30,11 +30,15 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import tasks.TaskEuclideanTsp;
+import api.Computer;
+import java.io.*;
 
 /**
  *
@@ -61,6 +65,11 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
     public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
     {
         super( "", new TaskEuclideanTsp( CITIES ) );
+    }
+
+    public ClientEuclideanTsp(String domainName) throws RemoteException, NotBoundException, MalformedURLException
+    {
+        super(domainName, new TaskEuclideanTsp( CITIES ) );
     }
 
     public static void main( String[] args ) throws Exception

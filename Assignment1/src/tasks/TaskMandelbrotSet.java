@@ -4,7 +4,7 @@ import api.Task;
 import java.lang.Math;
 import java.lang.Integer;
 
-public class TaskMandelbrotSet implements Task<Integer[][]>{
+public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializable{
 
     private double lowerLeftX;
     private double lowerLeftY;

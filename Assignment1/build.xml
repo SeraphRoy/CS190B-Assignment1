@@ -39,8 +39,10 @@
     </move>
   </target>
   
-  <target name="compile" description="Compile the program">
+  <target name="compile" description="Compile the program and make a jar file">
     <Compile srcdir="${src}" destdir="${build}" />
+    <mkdir dir="${lib}" />
+    <jar destfile="${lib}/program.jar" basedir="${build}" />
   </target>
 
   <target name="runServer" depends="compile" description="run the server">
@@ -55,9 +57,10 @@
     </java>
   </target>
 
-    <target name="runClientEuclideanTsp" depends="compile" description="run euclidean tsp">
+  <target name="runClientEuclideanTsp" depends="compile" description="run euclidean tsp">
     <java classname="clients.ClientEuclideanTsp" classpath="${build}" fork="true">
       <jvmarg value="-Djava.security.policy=policy" />
+      <!-- <arg value="${arg0}" /> -->
     </java>
   </target>
 
