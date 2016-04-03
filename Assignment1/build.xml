@@ -1,7 +1,7 @@
 <project name="CS190B" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
-  <property name="build" location="build" />
+  <property name="build" location="bin" />
   <property name="src" location="src" />
   <property name="doc" location="javadoc" />
   <property name="compile.debug" value="true" />
