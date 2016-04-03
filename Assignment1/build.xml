@@ -6,6 +6,7 @@
   <property name="doc" location="javadoc" />
   <property name="compile.debug" value="true" />
   <property name="serverclassname" value="computer.ComputerImpl" />
+  <property name="lib" location="lib" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -20,7 +21,24 @@
       </javac>
     </sequential>
   </macrodef>
-        
+
+  <target name="jar" depends="compile" description="jar the program">
+    <mkdir dir="${lib}" />
+    <jar destfile="${lib}/program.jar" basedir="${build}" />
+  </target>
+  
+  <target name="javadoc" depends="compile" description="create javadoc for the project">
+    <javadoc  destdir="tempdoc" author="true" version="true" use="true">
+      <fileset dir="${src}" includes="**/*.java"/>
+    </javadoc>
+    <!-- delete the old javadoc -->
+    <delete quiet="true" dir="${doc}" />
+    <!-- move everything you just made to the javadoc destination, and then make it readable -->
+    <move todir="${doc}" >
+      <fileset dir="tempdoc"/>
+    </move>
+  </target>
+  
   <target name="compile" description="Compile the program">
     <Compile srcdir="${src}" destdir="${build}" />
   </target>
@@ -48,18 +66,5 @@
     <delete dir="${doc}" quiet="true" />
   </target>
 
-  <target name="javadoc" depends="compile">
-    <delete dir="javadoc" quiet="true" />
-    <javadoc  destdir="tempdoc" author="true" version="true" use="true">
-      <fileset dir="${src}" includes="**/*.java"/>
-    </javadoc>
-    <!-- delete the old javadoc -->
-    <delete quiet="true" dir="${doc}" />
-    <!-- copy everything you just made to the javadoc destination, and then make it readable -->
-    <copy todir="${doc}" >
-      <fileset dir="tempdoc"/>
-    </copy>
-  </target>
-  
 </project>
 
