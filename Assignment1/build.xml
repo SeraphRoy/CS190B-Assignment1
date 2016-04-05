@@ -1,12 +1,13 @@
-<project name="CS190B" default="compile">
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CS190B HW1" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
   <property name="build" location="bin" />
   <property name="src" location="src" />
-  <property name="javadoc" location="javadoc" />
+  <property name="javadoc" location="documents/javadoc" />
   <property name="compile.debug" value="true" />
   <property name="serverclassname" value="computer.ComputerImpl" />
-  <property name="lib" location="lib" />
+  <property name="dist" location="dist" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -23,26 +24,22 @@
   </macrodef>
 
   <target name="jar" depends="compile" description="jar the program">
-    <mkdir dir="${lib}" />
-    <jar destfile="${lib}/program.jar" basedir="${build}" />
+    <mkdir dir="${dist}"/>
+    <!-- Make computer jar file -->
+    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/**"/>
+    
+    <!-- Make client jar file -->
+    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="client/** api/** tasks/**"/>
   </target>
   
   <target name="javadoc" depends="compile" description="create javadoc for the project">
-    <javadoc  destdir="tempdoc" author="true" version="true" use="true">
+    <javadoc destdir="${javadoc}" author="true" version="true" use="true">
       <fileset dir="${src}" includes="**/*.java"/>
     </javadoc>
-    <!-- delete the old javadoc -->
-    <delete quiet="true" dir="${javadoc}" />
-    <!-- move everything you just made to the javadoc destination, and then make it readable -->
-    <move todir="${javadoc}" >
-      <fileset dir="tempdoc"/>
-    </move>
   </target>
   
-  <target name="compile" description="Compile the program and make a jar file">
+  <target name="compile" description="Compile the program">
     <Compile srcdir="${src}" destdir="${build}" />
-    <mkdir dir="${lib}" />
-    <jar destfile="${lib}/program.jar" basedir="${build}" />
   </target>
 
   <target name="runServer" depends="compile" description="run the server">
@@ -67,6 +64,7 @@
   <target name="clean" description="delete unnecessary files and directories">
     <delete dir="${build}" quiet="true" />
     <delete dir="${javadoc}" quiet="true" />
+    <delete dir="${dist}" quiet="true" />
   </target>
 
 </project>
