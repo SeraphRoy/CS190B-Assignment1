@@ -2,20 +2,24 @@
   <body>
     <a href="index.html">Return to Homepage</a>
     <h2>Usage</h2>
-    <p>$ant -p to list all targets specified by build.xml</p>
+    <p>To list all targets specified by build.xml:<br> $ant -p</p>
     <h2>Tasks</h2>
     <p>There are only two tasks: Mandelbrot Set and Traveling Salesman Problem</p>
     <p>The default value of each can be found in the client files</p>
     <h2>Build</h2>
-    <p>$ant compile to compile the program</p>
-    <p>$ant jar to generate the executable far file</p>
-    <p>$ant javadoc to generate the javadoc</p>
-    <p>$ant clean to clean the .class files</p>
+    <p>To compile the program:<br/> $ant compile</p>
+    <p>To generate the executable jar files:<br/> $ant jar</p>
+    <p>To generate the javadoc:<br/> $ant javadoc</p>
+    <p>To clean the files:<br/> $ant clean</p>
     <h2>Run</h2>
-    <p>$ant runServer to run the server</p>
-    <p>$ant runClientEuclideanTsp to run the TSP task</p>
-    <p>$ant runClientMandelbrotSet to run the Mendelbrot Set task</p>
-
+    <p>To run the server:<br/> $ant runServer</p>
+    <p>To run the TSP task:<br/> $ant runClientEuclideanTsp</p>
+    <p>To run the Mendelbrot Set task:<br/> $ant runClientMandelbrotSet</p>
+    <h3>To execute the jar files: </h3>
+    <p>First:<br/>Copy the dist/ directory</p>
+    <p>To run the server:<br/> $java -cp dist/computer.jar computer.ComputerImpl</p>
+    <p>To run the mandelbrot set task<br/> $java -cp dist/clients.jar clients.ClientMandelbrotSet</p>
+    <p>To run the traveling salesman problem task<br/>$java -cp dist/clients.jar clients.ClientEuclideanTsp</p>
   </body>
 
 </html>

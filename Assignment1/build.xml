@@ -29,7 +29,7 @@
     <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/**"/>
     
     <!-- Make client jar file -->
-    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="client/** api/** tasks/**"/>
+    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="clients/** api/** tasks/** computer/**"/>
   </target>
   
   <target name="javadoc" depends="compile" description="create javadoc for the project">
