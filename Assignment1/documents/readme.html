@@ -28,9 +28,9 @@
     <p>To run the server:</p>
     <code>$java -Djava.security.policy=policy -cp dist/computer.jar computer.ComputerImpl</code>
     <p>To run the mandelbrot set task</p>
-    <code>$java -Djava.security.policy=policy -cp dist/clients.jar clients.ClientMandelbrotSet</code>
+    <code>$java -Djava.rmi.server.codebase=http://www.cs.ucsb.edu/~yanxi/CS190B/tasks_code/ -Djava.security.policy=policy -cp dist/clients.jar clients.ClientMandelbrotSet</code>
     <p>To run the traveling salesman problem task</p>
-    <code>$java -Djava.security.policy=policy -cp dist/clients.jar clients.ClientEuclideanTsp</code>
+    <code>$java -Djava.rmi.server.codebase=http://www.cs.ucsb.edu/~yanxi/CS190B/tasks_code/ -Djava.security.policy=policy -cp dist/clients.jar clients.ClientEuclideanTsp</code>
   </body>
 
 </html>
