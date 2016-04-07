@@ -8,6 +8,7 @@
   <property name="compile.debug" value="true" />
   <property name="serverclassname" value="computer.ComputerImpl" />
   <property name="dist" location="dist" />
+  <property name="client_web_codebase" value="http://www.cs.ucsb.edu/~yanxi/CS190B/tasks_code" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -52,12 +53,14 @@
   <target name="runClientMandelbrotSet" depends="compile" description="run mandelbrot set">
     <java classname="clients.ClientMandelbrotSet" classpath="${build}" fork="true">
       <jvmarg value="-Djava.security.policy=policy" />
+      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}" />
     </java>
   </target>
 
   <target name="runClientEuclideanTsp" depends="compile" description="run euclidean tsp">
     <java classname="clients.ClientEuclideanTsp" classpath="${build}" fork="true">
       <jvmarg value="-Djava.security.policy=policy" />
+      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}" />
       <!-- <arg value="${arg0}" /> -->
     </java>
   </target>
