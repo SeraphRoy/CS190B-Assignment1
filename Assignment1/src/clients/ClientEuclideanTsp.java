@@ -64,7 +64,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
 
     public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
     {
-        super( "", new TaskEuclideanTsp( CITIES ) );
+        super( "localhost", new TaskEuclideanTsp( CITIES ) );
     }
 
     public ClientEuclideanTsp(String domainName) throws RemoteException, NotBoundException, MalformedURLException

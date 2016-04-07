@@ -47,7 +47,7 @@ public class ClientMandelbrotSet extends Client<Integer[][]>
 
     public ClientMandelbrotSet() throws RemoteException, NotBoundException, MalformedURLException
     {
-        super( "" /* "localhost" */,
+        super( "localhost" /* "localhost" */,
                new TaskMandelbrotSet( LOWER_LEFT_X, LOWER_LEFT_Y, EDGE_LENGTH, N_PIXELS,
                                       ITERATION_LIMIT) );
     }

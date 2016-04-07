@@ -24,12 +24,13 @@
   </macrodef>
 
   <target name="jar" depends="compile" description="jar the program">
+    <delete dir="${dist}" quiet="true" />
     <mkdir dir="${dist}"/>
     <!-- Make computer jar file -->
-    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/**"/>
+    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/** tasks/**" />
     
     <!-- Make client jar file -->
-    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="clients/** api/** tasks/** computer/**"/>
+    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="clients/** api/** tasks/**" />
   </target>
   
   <target name="javadoc" depends="compile" description="create javadoc for the project">

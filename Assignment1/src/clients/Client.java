@@ -24,7 +24,7 @@
 package clients;
 import api.Computer;
 import api.Task;
-import computer.ComputerImpl;
+//import computer.ComputerImpl;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.net.MalformedURLException;
@@ -53,8 +53,9 @@ public class Client<T> extends JFrame
     {
         this.task = task;
         String url = "rmi://" + domainName + ":" + Computer.PORT + "/" + Computer.SERVICE_NAME;
-        computer = domainName == null || domainName.isEmpty()
-            ? new ComputerImpl() : (Computer) Naming.lookup( url );
+        //computer = domainName == null || domainName.isEmpty()
+        //    ? new ComputerImpl() : (Computer) Naming.lookup( url );
+        computer = (Computer) Naming.lookup(url);
     }
 
     void init( final String title )
