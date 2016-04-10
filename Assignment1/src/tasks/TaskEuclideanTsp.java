@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializable{
+    private static final long serialVersionUID = 227L;
+    
     private double[][] cityCo;
 
     public TaskEuclideanTsp(double[][] map){

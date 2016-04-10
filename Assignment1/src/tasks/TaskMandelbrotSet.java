@@ -5,7 +5,7 @@ import java.lang.Math;
 import java.lang.Integer;
 
 public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializable{
-
+    private static final long serialVersionUID = 227L;
     private double lowerLeftX;
     private double lowerLeftY;
     private double edgeLength;

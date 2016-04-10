@@ -8,7 +8,8 @@
   <property name="compile.debug" value="true" />
   <property name="serverclassname" value="computer.ComputerImpl" />
   <property name="dist" location="dist" />
-  <property name="client_web_codebase" value="http://www.cs.ucsb.edu/~yanxi/CS190B/tasks_code" />
+  <property name="client_web_codebase" value="http://www.cs.ucsb.edu/~yanxi/CS190B/" />
+  <property name="client_file_codebase" value="file:///Users/Seraph_Roy/Documents/github/Java-Centric-Cluster-and-Concurrent-Computing/Assignment1/bin/" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -28,7 +29,7 @@
     <delete dir="${dist}" quiet="true" />
     <mkdir dir="${dist}"/>
     <!-- Make computer jar file -->
-    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/** tasks/**" />
+    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/**" />
     
     <!-- Make client jar file -->
     <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="clients/** api/** tasks/**" />
@@ -36,7 +37,10 @@
   
   <target name="javadoc" depends="compile" description="create javadoc for the project">
     <javadoc destdir="${javadoc}" author="true" version="true" use="true">
-      <fileset dir="${src}" includes="**/*.java"/>
+      <!--<fileset dir="${src}" includes="**/*.java"/>-->
+      <mkdir dir="${build}"/>
+      <!--  Compile the java code from ${src} into ${build}  -->
+      <javac srcdir="${src}" destdir="${build}"/>
     </javadoc>
   </target>
   
@@ -44,27 +48,36 @@
     <Compile srcdir="${src}" destdir="${build}" />
   </target>
 
-  <target name="runServer" depends="compile" description="run the server">
-    <java classname="${serverclassname}" classpath="${build}" fork="true">
-      <jvmarg value="-Djava.security.policy=policy" />
+  <target name="runServer" depends="jar" description="run the server">
+    <java classname="computer.ComputerImpl" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
+      <classpath>
+        <pathelement location="dist/computer.jar"/>
+      </classpath>
     </java>
   </target>
 
-  <target name="runClientMandelbrotSet" depends="compile" description="run mandelbrot set">
-    <java classname="clients.ClientMandelbrotSet" classpath="${build}" fork="true">
-      <jvmarg value="-Djava.security.policy=policy" />
-      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}" />
+  <target name="runClientMandelbrotSet" depends="jar" description="run mandelbrot set">
+    <java classname="clients.ClientMandelbrotSet" fork="true">
+      <jvmarg value="-Djava.rmi.server.codebase=${client_file_codebase}"/>
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/clients.jar"/>
+      </classpath>
     </java>
   </target>
-
-  <target name="runClientEuclideanTsp" depends="compile" description="run euclidean tsp">
-    <java classname="clients.ClientEuclideanTsp" classpath="${build}" fork="true">
-      <jvmarg value="-Djava.security.policy=policy" />
-      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}" />
-      <!-- <arg value="${arg0}" /> -->
+  
+  <target name="runClientEuclideanTsp" depends="jar" description="run euclidean tsp">
+    <java classname="clients.ClientEuclideanTsp" fork="true">
+      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}"/>
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/clients.jar"/>
+      </classpath>
     </java>
   </target>
-
+  
   <target name="clean" description="delete unnecessary files and directories">
     <delete dir="${build}" quiet="true" />
     <delete dir="${javadoc}" quiet="true" />

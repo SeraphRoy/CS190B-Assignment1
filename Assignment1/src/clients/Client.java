@@ -24,7 +24,6 @@
 package clients;
 import api.Computer;
 import api.Task;
-//import computer.ComputerImpl;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.net.MalformedURLException;
