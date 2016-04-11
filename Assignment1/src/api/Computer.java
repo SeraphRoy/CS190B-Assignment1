@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 public interface Computer extends Remote{
     public static String SERVICE_NAME = "ComputerService";
-    public static String PORT = "1098";
+    public static String PORT = "1078";
 
     public <T> T Execute(Task<T> t) throws RemoteException;
 }
