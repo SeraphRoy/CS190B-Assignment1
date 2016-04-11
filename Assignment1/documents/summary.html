@@ -1,0 +1,26 @@
+<html>
+  
+  <body>
+    <a href="index.html">Return to Homepage</a>
+    <div align="center">
+      <h2>Summary of "A Note on Distributed Computing" </h2>
+    </div>
+    <div>
+      <p>The paper starts by talking about the traditional view of distributed computing, which basically treats local computing (programs that are confined to a single address space) and distributed computing (remote object invocation) the same way. From the programmer's point of view, there is no essential difference between objects that share an address space and objects that are on two machines. There are several principles of that view, which are basically saying that the implementation of the components of the application is the only thing that matters to the failure and performance issues; the interface of the objects don't matter. After introducing the traditional point of view, the auther then explain the reason why he thinks it is wrong.</p>
+      <p>
+        There are several differences between local computing and distributed computing. The first one is lantency; distributed computing endures significantlly larger latency than local computing, for obvious reasons. Programs that fail to take this issue into account may encounter failures for the whole program.
+      </p>
+      <p>
+        Another major differnce is memory access, expecially for pointers. The program needs to know whether a pointer is referring to a local address or a remote address, which can be achieved by either the programmer himself, who intentionally notes the difference, or a layer in the system to take care of this. 
+      </p>
+
+      <p>While it is logically possible to solve the two differences above to make local and remote computing seem to be unified, partial failure in distributed computing cannot even be logically solved under the vision of unified objects. There is not an overall detection to know which part of the whole distributed system is failing and thus usually we have no way to know why there is a partial failure and cannot solve it completely. Therefore, we have to make some changes on the interface level to detect those partial failures. Even if there is no problem of the implementation of the functionality itself, it is still possible that the system will face various kinds of partial failures.
+      </p>
+
+      <p>
+        To sum up, it is not possible to treat local computing and distributed computing in the same way. There are many differences between them and we should take care of them seriously and treat those two kinds of computing differently. 
+      </p>
+    </div>
+  </body>
+  
+</html>
