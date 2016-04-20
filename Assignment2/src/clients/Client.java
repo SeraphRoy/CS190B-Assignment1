@@ -26,6 +26,7 @@ import api.Computer;
 import api.Task;
 import api.Space;
 import api.Result;
+import job.EuclideanTspJob;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -77,19 +78,6 @@ public class Client<T> extends JFrame
 
     }
 
-    public void generateTasks(){
-        List<Task> list = task.splitTasks();
-        space.putAll(list);
-    }
-
-    public List<Result> collectResults(int numTasks){
-        List<Result> list = new ArrayList<Result>;
-        for(int i = 0; i < numTasks; i++){
-            Result r = space.take();
-            list.add(r);
-        }
-        return list;
-    }
 
     public T runTask() throws RemoteException
     {
