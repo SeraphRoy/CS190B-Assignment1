@@ -11,8 +11,9 @@ import java.rmi.registry.LocateRegistry;
 import computer.ComputerImpl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import api.Computer;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private BlockingQueue<Task> task;
@@ -29,22 +30,27 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public void register(Computer computer){
-        ComputerProxy c = new ComputerProxy(computer);
+        ComputerProxy c1 = new ComputerProxy(computer);
+        new Thread(c1).start();
+    }
+
+    public void main(String[] args){
+        task = new LinkedBlockingQueue<Task>();
+        result = new LinkedBlockingQueue<Result>();
 
         if(System.getSecurityManager() == null)
             System.setSecurityManager(new SecurityManager());
         try{
             Registry registry = LocateRegistry.createRegistry(Integer.parseInt(Space.PORT));
-            registry.rebind(Space.SERVICE_NAME, computer);
+            Space space = new SpaceImpl();
+            registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
         } catch (Exception e){
             System.err.println("Computer exception:");
             e.printStackTrace();
         }
-    }
 
-    public void main(String[] args){
-        this.register
+
     }
 
     private class ComputerProxy implements Runnable{
@@ -63,7 +69,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         final long taskStartTime = System.nanoTime();
                         final T value = computer.Execute(t);
                         final long taskRunTime = (System.nanoTime() - taskStartTime) / 1000000;
-                        Logger.getLogger(SpaceImpl.class.getCannonicalName())
+                        Logger.getLogger(SpaceImpl.class.getCanonicalName())
                             .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{t, taskRunTime});
                     }
                     catch (RemoteException e){
