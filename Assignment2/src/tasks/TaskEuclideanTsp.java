@@ -6,8 +6,9 @@ import java.util.ArrayList;
 
 public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializable{
     private static final long serialVersionUID = 227L;
-    
+
     private double[][] cityCo;
+    public int fixNum = 1;
 
     public TaskEuclideanTsp(double[][] map){
         cityCo = new double[map.length][map[0].length];
@@ -17,14 +18,35 @@ public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializab
             }
         }
     }
+    public List<Task> splitTasks(){
+        List<Task> list = new ArrayList<Task>();
+        double[][] cities = new double[cityCo.length][cityCo[0].length];
+        for(int i = 0; i < cities.length; i++){
+            for(int j = 0; j < cities[i].length; j++)
+                cities[i][j] = cityCo[i][j];
+        }
+        for(int i = 1; i < cities.length; i++){
+            double tempX = cities[1][0];
+            double tempY = cities[1][1];
+            cities[1][0] = cities[i][0];
+            cities[1][1] = cities[i][1];
+            cities[i][0] = tempX;
+            cities[i][1] = tempY;
 
-    public List<Integer> Execute(){
+            TaskEuclideanTsp task = new TaskEuclideanTsp(cities);
+            task.fixNum = 2;
+            list.add(task);
+        }
+        return list;
+    }
+
+    public List<Integer> call(){
         int[] cityNum = new int[cityCo.length];
         for(int i = 0; i < cityCo.length; i++)
             cityNum[i] = i;
         ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 
-        permute(cityNum, 0, result);
+        permute(cityNum, fixNum, result);
         double min = Double.MAX_VALUE;
         double current = 0;
 

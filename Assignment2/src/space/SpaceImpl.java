@@ -1,24 +1,25 @@
 package space;
 
+import api.Space;
+import api.Task;
+import api.Result;
+import api.Computer;
+import computer.ComputerImpl;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import computer.ComputerImpl;
 import java.rmi.server.UnicastRemoteObject;
-import api.Space;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import computer.ComputerImpl;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import api.Computer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private BlockingQueue<Task> task;
     private BlockingQueue<Result> result;
-
     public void putAll(List<Task> taskList){
         for(Task t : taskList){
             task.put(t);
@@ -30,8 +31,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public void register(Computer computer){
-        ComputerProxy c1 = new ComputerProxy(computer);
-        new Thread(c1).start();
+        ComputerProxy c = new ComputerProxy(computer);
+        new Thread(c).start();
     }
 
     public void main(String[] args){
@@ -71,6 +72,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         final long taskRunTime = (System.nanoTime() - taskStartTime) / 1000000;
                         Logger.getLogger(SpaceImpl.class.getCanonicalName())
                             .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{t, taskRunTime});
+                        Result<T> r = new Result<T>(value, taskRunTime);
+                        result.put(r);
                     }
                     catch (RemoteException e){
                         task.put(t);

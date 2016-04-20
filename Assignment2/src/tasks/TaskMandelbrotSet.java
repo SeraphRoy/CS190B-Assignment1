@@ -58,7 +58,7 @@ public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializabl
         this.nPixels = nPixels;
         this.iterationLimit = iterationLimit;
     }
-    public Integer[][] Execute(){
+    public Integer[][] call(){
         Integer[][] count = new Integer[nPixels][nPixels];
         int num = 0;
         for(int i = 0; i < nPixels; i ++){

@@ -24,6 +24,9 @@
 package clients;
 import api.Computer;
 import api.Task;
+import api.Space;
+import api.Result;
+
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.net.MalformedURLException;
@@ -45,16 +48,16 @@ import javax.swing.JScrollPane;
 public class Client<T> extends JFrame
 {
     final protected Task<T> task;
-    final private Computer computer;
+    final private Space space;
 
     public Client( final String domainName, final Task<T> task )
         throws RemoteException, NotBoundException, MalformedURLException
     {
         this.task = task;
-        String url = "rmi://" + domainName + ":" + Computer.PORT + "/" + Computer.SERVICE_NAME;
+        String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
         //computer = domainName == null || domainName.isEmpty()
         //    ? new ComputerImpl() : (Computer) Naming.lookup( url );
-        computer = (Computer) Naming.lookup(url);
+        space = (Space) Naming.lookup(url);
     }
 
     void init( final String title )
@@ -75,11 +78,11 @@ public class Client<T> extends JFrame
 
     public T runTask() throws RemoteException
     {
-        final long taskStartTime = System.nanoTime();
-        final T value = computer.Execute( task );
-        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-        Logger.getLogger( Client.class.getCanonicalName() )
-            .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+        //final long taskStartTime = System.nanoTime();
+        final T value = space.Execute( task );
+        //final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        //Logger.getLogger( Client.class.getCanonicalName() )
+        //    .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         return value;
 
     }

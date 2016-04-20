@@ -2,6 +2,9 @@ package computer;
 
 import api.Computer;
 import api.Space;
+import api.Task;
+import api.Result;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,7 +16,7 @@ import java.util.List;
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
     public <T> T Execute(Task<T> t){
-        return t.Execute();
+        return t.call();
     }
 
     public void main(String[] args){
