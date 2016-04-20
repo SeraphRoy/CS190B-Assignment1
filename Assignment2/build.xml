@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CS190B HW1" default="compile">
+<project name="CS190B HW2" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
   <property name="build" location="bin" />
@@ -8,8 +8,6 @@
   <property name="compile.debug" value="true" />
   <property name="serverclassname" value="computer.ComputerImpl" />
   <property name="dist" location="dist" />
-  <property name="client_web_codebase" value="http://www.cs.ucsb.edu/~yanxi/CS190B/" />
-  <property name="client_file_codebase" value="file:///Users/Seraph_Roy/Documents/github/Java-Centric-Cluster-and-Concurrent-Computing/Assignment1/bin/" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -29,10 +27,7 @@
     <delete dir="${dist}" quiet="true" />
     <mkdir dir="${dist}"/>
     <!-- Make computer jar file -->
-    <jar jarfile="${dist}/computer.jar" basedir="${build}" includes="computer/** api/**" />
-    
-    <!-- Make client jar file -->
-    <jar jarfile="${dist}/clients.jar" basedir="${build}" includes="clients/** api/** tasks/**" />
+    <jar jarfile="${dist}/all.jar" basedir="${build}"/>
   </target>
   
   <target name="javadoc" depends="compile" description="create javadoc for the project">
@@ -48,22 +43,20 @@
     <Compile srcdir="${src}" destdir="${build}" />
   </target>
 
-  <target name="runServer" depends="jar" description="run the server">
-    <java classname="computer.ComputerImpl" fork="true">
+  <target name="runSpace" depends="compile" description="run the space">
+    <java classname="space.Space" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
-      <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
       <classpath>
-        <pathelement location="dist/computer.jar"/>
+        <pathelement location="${build}"/>
       </classpath>
     </java>
   </target>
 
   <target name="runClientMandelbrotSet" depends="jar" description="run mandelbrot set">
     <java classname="clients.ClientMandelbrotSet" fork="true">
-      <jvmarg value="-Djava.rmi.server.codebase=${client_web_codebase}"/>
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
-        <pathelement location="dist/clients.jar"/>
+        <pathelement location="${build}"/>
       </classpath>
     </java>
   </target>
