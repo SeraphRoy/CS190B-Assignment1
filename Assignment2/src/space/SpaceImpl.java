@@ -20,29 +20,33 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private BlockingQueue<Task> task;
     private BlockingQueue<Result> result;
-    public void putAll(List<Task> taskList){
+
+    public SpaceImpl() throws RemoteException{
+        task = new LinkedBlockingQueue<Task>();
+        result = new LinkedBlockingQueue<Result>();
+    }
+
+    public void putAll(List<Task> taskList) throws RemoteException, InterruptedException{
         for(Task t : taskList){
             task.put(t);
         }
     }
 
-    public Result take(){
+    public Result take()throws RemoteException, InterruptedException{
         return result.take();
     }
 
-    public void register(Computer computer){
+    public void register(Computer computer) throws RemoteException{
         ComputerProxy c = new ComputerProxy(computer);
         new Thread(c).start();
+        System.out.println("Computer is registered");
     }
 
-    public void main(String[] args){
-        task = new LinkedBlockingQueue<Task>();
-        result = new LinkedBlockingQueue<Result>();
-
+    public static void main(String[] args){
         if(System.getSecurityManager() == null)
             System.setSecurityManager(new SecurityManager());
         try{
-            Registry registry = LocateRegistry.createRegistry(Integer.parseInt(Space.PORT));
+            Registry registry = LocateRegistry.createRegistry(Space.PORT);
             Space space = new SpaceImpl();
             registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
@@ -56,7 +60,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     private class ComputerProxy implements Runnable{
         private Computer computer;
-        private Task<T> t;
         public ComputerProxy(Computer computer){
             this.computer = computer;
         }
@@ -65,20 +68,21 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         public void run(){
             try{
                 while(true){
-                    t = task.take();
+                    Task t = null;
+                    Result r = null;
                     try{
-                        final long taskStartTime = System.nanoTime();
-                        final T value = computer.Execute(t);
-                        final long taskRunTime = (System.nanoTime() - taskStartTime) / 1000000;
-                        Logger.getLogger(SpaceImpl.class.getCanonicalName())
-                            .log(Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{t, taskRunTime});
-                        Result<T> r = new Result<T>(value, taskRunTime);
-                        result.put(r);
+                        t = task.take();
+                        r = new Result(computer.Execute(t), -1);
                     }
                     catch (RemoteException e){
                         task.put(t);
+                        System.out.println("This computer is dead!!!");
                         return;
                     }
+                    try{
+                        result.put(r);
+                    }
+                    catch(Exception ignore){}
                 }
             }
             catch (InterruptedException ignore) {}

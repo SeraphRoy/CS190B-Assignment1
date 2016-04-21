@@ -11,6 +11,7 @@ public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializabl
     private double edgeLength;
     private int nPixels;
     private int iterationLimit;
+    public int rowNum;
 
     private class ComplexNumber{
         public double real;
@@ -51,12 +52,13 @@ public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializabl
     }
 
 
-    public TaskMandelbrotSet(double lowerLeftX, double lowerLeftY, double edgeLength, int nPixels, int iterationLimit){
+    public TaskMandelbrotSet(double lowerLeftX, double lowerLeftY, double edgeLength, int nPixels, int iterationLimit, int rowNum){
         this.lowerLeftX = lowerLeftX;
         this.lowerLeftY = lowerLeftY;
         this.edgeLength = edgeLength;
         this.nPixels = nPixels;
         this.iterationLimit = iterationLimit;
+         this.rowNum = rowNum;
     }
     public Integer[][] call(){
         Integer[][] count = new Integer[nPixels][nPixels];

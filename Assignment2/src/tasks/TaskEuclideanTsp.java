@@ -9,6 +9,7 @@ public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializab
 
     private double[][] cityCo;
     public int fixNum = 1;
+    public int cityNum;
 
     public TaskEuclideanTsp(double[][] map){
         cityCo = new double[map.length][map[0].length];
@@ -17,6 +18,7 @@ public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializab
                 this.cityCo[i][j] = map[i][j];
             }
         }
+        cityNum = map.length;
     }
     public List<Task> splitTasks(){
         List<Task> list = new ArrayList<Task>();
@@ -40,6 +42,17 @@ public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializab
         return list;
     }
 
+    public int getDistance(List<Integer> item){
+        int current = 0;
+        for(int i = 0; i < item.size() -1 ; i++){
+            current += Math.sqrt(Math.pow(cityCo[item.get(i+1)][0]-cityCo[item.get(i)][0], 2) + Math.pow(cityCo[item.get(i+1)][1] - cityCo[item.get(i)][1], 2));
+        }
+        current += Math.sqrt(
+                             Math.pow(cityCo[item.get(0)][0]-cityCo[item.get(item.size()-1)][0], 2)
+                             + Math.pow(cityCo[item.get(0)][1] - cityCo[item.get(item.size()-1)][1], 2)
+                             );
+        return current;
+    }
     public List<Integer> call(){
         int[] cityNum = new int[cityCo.length];
         for(int i = 0; i < cityCo.length; i++)
@@ -53,13 +66,7 @@ public class TaskEuclideanTsp implements Task<List<Integer>>, java.io.Serializab
         ArrayList<Integer> solution = new ArrayList<>();
 
         for(ArrayList<Integer> item : result){
-            for(int i = 0; i < item.size() -1 ; i++){
-                current += Math.sqrt(Math.pow(cityCo[item.get(i+1)][0]-cityCo[item.get(i)][0], 2) + Math.pow(cityCo[item.get(i+1)][1] - cityCo[item.get(i)][1], 2));
-            }
-            current += Math.sqrt(
-                                 Math.pow(cityCo[item.get(0)][0]-cityCo[item.get(item.size()-1)][0], 2)
-                                 + Math.pow(cityCo[item.get(0)][1] - cityCo[item.get(item.size()-1)][1], 2)
-                                 );
+            current = getDistance(item);
             if (current < min){
                 min = current;
                 solution.clear();

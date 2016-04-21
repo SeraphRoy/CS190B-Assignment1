@@ -26,7 +26,7 @@ import api.Computer;
 import api.Task;
 import api.Space;
 import api.Result;
-import job.EuclideanTspJob;
+import api.Job;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -51,11 +51,13 @@ public class Client<T> extends JFrame
 {
     final protected Task<T> task;
     final private Space space;
+    final private Job job;
 
-    public Client( final String domainName, final Task<T> task )
+    public Client( final String domainName, final Task<T> task, final Job job )
         throws RemoteException, NotBoundException, MalformedURLException
     {
         this.task = task;
+        this.job = job;
         String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
         //computer = domainName == null || domainName.isEmpty()
         //    ? new ComputerImpl() : (Computer) Naming.lookup( url );
@@ -81,12 +83,14 @@ public class Client<T> extends JFrame
 
     public T runTask() throws RemoteException
     {
-        //final long taskStartTime = System.nanoTime();
-
-        //final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-        //Logger.getLogger( Client.class.getCanonicalName() )
-        //    .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
-        return value;
+        final long taskStartTime = System.nanoTime();
+        long time = System.nanoTime();
+        job.generateTasks(space);
+        T t = (T) job.collectResults(space);
+        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        Logger.getLogger( Client.class.getCanonicalName() )
+            .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+        return t;
 
     }
 
