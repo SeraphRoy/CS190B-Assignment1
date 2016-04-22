@@ -39,7 +39,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     public void register(Computer computer) throws RemoteException{
         ComputerProxy c = new ComputerProxy(computer);
         new Thread(c).start();
-        System.out.println("Computer is registered");
+        System.out.println("Computer" + computer + " is registered");
     }
 
     public static void main(String[] args){
@@ -76,7 +76,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     catch (RemoteException e){
                         task.put(t);
-                        System.out.println("This computer is dead!!!");
+                        System.out.println("Computer" + computer + " is dead!!!");
                         return;
                     }
                     try{

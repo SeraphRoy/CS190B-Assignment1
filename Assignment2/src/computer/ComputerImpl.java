@@ -24,11 +24,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
     public ComputerImpl() throws RemoteException{};
 
     public <T> T Execute(Task<T> task) throws RemoteException{
-        //final long taskStartTime = System.nanoTime();
+        final long taskStartTime = System.nanoTime();
         T t = task.call();
-        //final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-        //Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-        //    .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+            .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         return t;
     }
 
