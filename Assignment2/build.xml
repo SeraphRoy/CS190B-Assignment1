@@ -52,11 +52,11 @@
     </java>
   </target>
 
-  <target name="runComputer" depends="compile" description="start a computer">
+  <target name="runComputer" depends="jar" description="start a computer">
     <java classname="computer.ComputerImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
-        <pathelement location="${build}"/>
+        <pathelement location="dist/all.jar"/>
       </classpath>
     </java>
   </target>
@@ -65,7 +65,7 @@
     <java classname="clients.ClientMandelbrotSet" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
-        <pathelement location="${build}"/>
+        <pathelement location="dist/all.jar"/>
       </classpath>
     </java>
   </target>
@@ -74,7 +74,7 @@
     <java classname="clients.ClientEuclideanTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
-        <pathelement location="${build}"/>
+        <pathelement location="dist/all.jar"/>
       </classpath>
     </java>
   </target>
