@@ -61,22 +61,22 @@ public class TaskMandelbrotSet implements Task<Integer[][]>, java.io.Serializabl
          this.rowNum = rowNum;
     }
     public Integer[][] call(){
-        Integer[][] count = new Integer[nPixels][nPixels];
+        Integer[][] count = new Integer[nPixels][2];
         int num = 0;
         for(int i = 0; i < nPixels; i ++){
-            for(int j = 0; j < nPixels; j++){
-                ComplexNumber current = new ComplexNumber(i, j);
-                while(current.Size() <= 2 && num < iterationLimit){
-                    num += 1;
-                    current.Square();
-                    current.Plus(new ComplexNumber(i, j));;
-                }
-                count[i][j] = num;
-                //System.out.print(num + " ");
-                num = 0;
+            count[i][1] = rowNum;
+            //for(int j = 0; j < nPixels; j++){
+            ComplexNumber current = new ComplexNumber(i, rowNum);
+            while(current.Size() <= 2 && num < iterationLimit){
+                num += 1;
+                current.Square();
+                current.Plus(new ComplexNumber(i, rowNum));;
             }
-            //System.out.print("\n");
+            count[i][0] = num;
+            //System.out.print(num + " ");
+            num = 0;
         }
+            //System.out.print("\n");
         return count;
     }
 }

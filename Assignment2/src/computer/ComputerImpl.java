@@ -15,17 +15,20 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.Naming;
 import java.util.concurrent.BlockingQueue;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public ComputerImpl() throws RemoteException{};
 
     public <T> T Execute(Task<T> task) throws RemoteException{
-        long elaps = System.nanoTime();
+        //final long taskStartTime = System.nanoTime();
         T t = task.call();
-        long time = (System.nanoTime()-elaps)/1000000;
-        System.out.println(time);
-        //Result value = new Result(t, time);
+        //final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        //Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+        //    .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         return t;
     }
 

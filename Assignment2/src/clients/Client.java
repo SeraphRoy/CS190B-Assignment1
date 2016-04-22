@@ -81,15 +81,14 @@ public class Client<T> extends JFrame
     }
 
 
-    public T runTask() throws RemoteException
+    public T runTask() throws RemoteException, InterruptedException
     {
         final long taskStartTime = System.nanoTime();
-        long time = System.nanoTime();
         job.generateTasks(space);
         T t = (T) job.collectResults(space);
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( Client.class.getCanonicalName() )
-            .log( Level.INFO, "Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+            .log( Level.INFO, "Client Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         return t;
 
     }

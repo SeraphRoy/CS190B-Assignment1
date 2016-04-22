@@ -60,6 +60,7 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
             // { 6, 5 },
             // { 1, 3 },
             // { 6, 6 }
+
             { 1, 1 },
             { 8, 1 },
             { 8, 8 },
@@ -72,6 +73,18 @@ public class ClientEuclideanTsp extends Client<List<Integer>>
             { 6, 3 },
             { 6, 6 },
             { 3, 6 }
+
+            // { 0, 0 },
+            // { 1, 1 },
+            // { 2, 0 },
+            // { 3, 1 },
+            // { 4, 0 },
+            // { 5, 1 },
+            // { 6, 0 },
+            // { 7, 1 },
+            // { 8, 0 },
+            // { 9, 1 },
+            // { 10, 0 }
         };
 
     public ClientEuclideanTsp() throws RemoteException, NotBoundException, MalformedURLException
