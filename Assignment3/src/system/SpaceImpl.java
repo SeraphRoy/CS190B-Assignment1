@@ -1,11 +1,5 @@
 package system;
-
-import api.Space;
-import api.Task;
-import api.Result;
-import api.Computer;
-import computer.ComputerImpl;
-
+import api.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -15,26 +9,17 @@ import java.rmi.registry.LocateRegistry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
-    private BlockingQueue<Task> task;
-    private BlockingQueue<Result> result;
+    private BlockingQueue<Closure> readyClosure;
+    private ConcurrentHashMap<int, Closure> waitingClosures;
 
     public SpaceImpl() throws RemoteException{
-        task = new LinkedBlockingQueue<Task>();
-        result = new LinkedBlockingQueue<Result>();
-    }
-
-    public void putAll(List<Task> taskList) throws RemoteException, InterruptedException{
-        for(Task t : taskList){
-            task.put(t);
-        }
-    }
-
-    public Result take()throws RemoteException, InterruptedException{
-        return result.take();
+        readyClosure = new LinkedBlockingQueue<Closure>();
+        waitingClosures = new ConcurrentHashMap();
     }
 
     public void register(Computer computer) throws RemoteException{
@@ -75,11 +60,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     Task t = null;
                     Result r = null;
                     try{
-                        t = task.take();
+                        t = readyTasks.take();
                         r = new Result(computer.Execute(t), -1);
                     }
                     catch (RemoteException e){
-                        task.put(t);
+                        readyTasks.put(t);
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }

@@ -10,15 +10,18 @@ public class Result<T> implements Serializable
 {
     private final T taskReturnValue;
     private final long taskRunTime;
+    private final boolean isResult;
 
-    public Result( T taskReturnValue, long taskRunTime )
+    public Result( T taskReturnValue, long taskRunTime, boolean isResult)
     {
         assert taskReturnValue != null;
         assert taskRunTime >= 0;
         this.taskReturnValue = taskReturnValue;
         this.taskRunTime = taskRunTime;
-            
+        this.isResult = isResult;
     }
+
+    public boolean isResult(){return isResult;}
 
     public T getTaskReturnValue() { return taskReturnValue; }
 
@@ -32,7 +35,6 @@ public class Result<T> implements Serializable
         stringBuilder.append( "\n\tExecution time:\n\t" ).append( taskRunTime );
         stringBuilder.append( "\n\tReturn value:\n\t" ).append( taskReturnValue.toString() );
         return stringBuilder.toString();
-            
     }
 
 }

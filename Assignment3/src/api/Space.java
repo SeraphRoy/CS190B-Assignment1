@@ -14,10 +14,9 @@ public interface Space extends Remote
     public static int PORT = 8001;
     public static String SERVICE_NAME = "Space";
 
-    void putAll ( List<Task> taskList ) throws RemoteException, InterruptedException;
-
-    Result take() throws RemoteException, InterruptedException;
-
     void register( Computer computer ) throws RemoteException;
 
+    void putReady(Task<T> task) throws RemoteException;
+
+    void putWaiting(Task<T> task) throws RemoteException;
 }
