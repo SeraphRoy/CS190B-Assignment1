@@ -22,6 +22,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         waitingClosures = new ConcurrentHashMap();
     }
 
+    void sendArgument(Continuation cont, T result) throws RemoteException{
+
+    }
+
     public void register(Computer computer) throws RemoteException{
         ComputerProxy c = new ComputerProxy(computer);
         new Thread(c).start();

@@ -1,4 +1,5 @@
 package api;
+import system.*;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
@@ -15,12 +16,20 @@ public abstract class Task<V> extends Serializable, Callable<V>
 
     final private List<Argument<T>> argumentList;
 
+    final private Continuation cont;
+
     @Override
-    V call();
+    public void call();
 
-    public void spawnReady();
+    public void spawnReady(){
+        System.err.println("You shouldn't reach this point");
+    }
 
-    public void spawnWaiting();
+    public void spawnWaiting(){
+        System.err.println("You shouldn't reach this point");
+    }
 
-    public void sendArgument();
+    public void sendArgument(){
+        System.err.println("You shouldn't reach this point");
+    }
 }

@@ -19,4 +19,6 @@ public interface Space extends Remote
     void putReady(Task<T> task) throws RemoteException;
 
     void putWaiting(Task<T> task) throws RemoteException;
+
+    void sendArgument(Continuation cont, T result) throws RemoteException;
 }

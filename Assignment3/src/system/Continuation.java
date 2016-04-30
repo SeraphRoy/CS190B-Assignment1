@@ -1,15 +1,15 @@
 package system;
 
 class Continuation{
-    final private Closure closure;
+    final private long closureId;
     final private int slot;
 
-    public Continuation(Closure c, int s){
-        closure = c;
+    public Continuation(long closureId, int s){
+        this.closureId = closureId;
         slot = s;
     }
 
-    public Closure getClosure(){return closure;}
+    public long getClosureId(){return closureId;}
 
     public int getSlot(){return slot;}
 }
