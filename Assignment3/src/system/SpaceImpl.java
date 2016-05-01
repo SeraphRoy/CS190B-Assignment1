@@ -22,7 +22,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         waitingClosures = new ConcurrentHashMap();
     }
 
-    void sendArgument(Continuation cont, T result) throws RemoteException{
+    public void sendArgument(Continuation cont, T result) throws RemoteException{
+
+    }
+
+    public void putReady(Task<T> task) throws RemoteException{
+
+    }
+
+    public void putWaiting(Task<T> task) throws RemoteException{
 
     }
 
@@ -64,11 +72,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     Task t = null;
                     Result r = null;
                     try{
-                        t = readyTasks.take();
-                        r = new Result(computer.Execute(t), -1);
+                        t = takeReady();
+                        r = computer.Execute(t);
                     }
                     catch (RemoteException e){
-                        readyTasks.put(t);
+                        putReady(t);
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }

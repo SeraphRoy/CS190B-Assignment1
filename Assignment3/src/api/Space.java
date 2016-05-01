@@ -14,11 +14,13 @@ public interface Space extends Remote
     public static int PORT = 8001;
     public static String SERVICE_NAME = "Space";
 
-    void register( Computer computer ) throws RemoteException;
+    public void register( Computer computer ) throws RemoteException;
 
-    void putReady(Task<T> task) throws RemoteException;
+    public void putReady(Task<T> task) throws RemoteException;
 
-    void putWaiting(Task<T> task) throws RemoteException;
+    public void putWaiting(Task<T> task) throws RemoteException;
 
-    void sendArgument(Continuation cont, T result) throws RemoteException;
+    public void sendArgument(Continuation cont, T result) throws RemoteException;
+
+    public Task<T> takeReady() throws RemoteException;
 }
