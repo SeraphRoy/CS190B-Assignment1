@@ -31,7 +31,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( ComputerImpl.class.getCanonicalName() )
             .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
-        return new Result<>(v, taskRunTime);
+        return new Result<T>(t, taskRunTime);
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{

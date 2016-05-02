@@ -4,21 +4,21 @@ import api.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Closure implements java.io.Serializable{
+public class Closure<V> implements java.io.Serializable{
     private int counter;
     final private Task<V> task;
-    final private ArrayList<Argument<T>> argumentList;
+    final private ArrayList<Argument> argumentList;
     public static long closureIds = 0;
-    private int closureId;
+    private long closureId;
 
-    public Closure(int argc, Task<V> task, List<Argument<T>> list){
+    public <V> Closure(int argc, Task<V> task, List<Argument> list){
         counter = argc;
         this.task = task;
-        closureId = Task.closureIds++;
+        closureId = Closure.closureIds++;
         argumentList = new ArrayList<>(argc);
         if(argc != 0){
             if(list != null){
-                for(Argument<T> a : list){
+                for(Argument a : list){
                     if(a != null)
                         this.addArgument(a);
                 }
@@ -30,11 +30,11 @@ public class Closure implements java.io.Serializable{
 
     public Task getTask(){return task;}
 
-    public List<> getList(){return argumentList;}
+    public List<Argument> getList(){return argumentList;}
 
     public long getClosureId(){return closureId;}
 
-    public void addArgument(Argument<T> a){
+    public void addArgument(Argument a){
         argumentList.add(a.getIndex(), a);
         counter --;
     }

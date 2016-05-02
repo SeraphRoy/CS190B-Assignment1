@@ -17,7 +17,7 @@
       <mkdir dir="@{destdir}" />
       <depend srcdir="${srcdir}" destdir="${destdir}" />
       <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="${compile.debug}">
-        <compilerarg value="-Xlint:unchecked" />
+        <!--<compilerarg value="-Xlint:unchecked" />-->
         <!--<compilearg value="-Xlint:deprecation" />-->
       </javac>
     </sequential>

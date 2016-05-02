@@ -1,6 +1,6 @@
 package system;
 
-class Continuation{
+public class Continuation{
     final private long closureId;
     final private int slot;
 

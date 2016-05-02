@@ -2,46 +2,44 @@ package api;
 import system.*;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
+import java.util.List;
+import java.rmi.RemoteException;
 
 /**
  *
  * @author Peter Cappello
  * @param <V> the task return type.
  */
-public abstract class Task<V> extends Serializable, Callable<V>
-{
-    private T value;
+public abstract class Task<V> implements Serializable{
+    final protected Space space;
 
-    final private Space space;
+    final protected List<Argument> argumentList;
 
-    final private List<Argument<T>> argumentList;
+    final protected Continuation cont;
 
-    final private Continuation cont;
+    protected int argc;
 
-    final private int argc;
-
-    public Task(Space space, List<Argument<T>> list, Continuation cont){
+    public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
     }
 
-    @Override
-    public void call();
+    public abstract void call();
 
-    public void spawnReady(){
+    public void spawnReady() throws RemoteException{
         System.err.println("You shouldn't reach this point");
     }
 
-    public void spawnWaiting(){
+    public void spawnWaiting() throws RemoteException{
         System.err.println("You shouldn't reach this point");
     }
 
-    public void sendArgument(){
+    public void sendArgument() throws RemoteException{
         System.err.println("You shouldn't reach this point");
     }
 
-    public List<Argument<T>> getArgumentList(){return argumentList;}
+    public List<Argument> getArgumentList(){return argumentList;}
 
     public Continuation getCont(){return cont;}
 

@@ -3,7 +3,7 @@ package api;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import computer.ComputerImpl;
+import system.*;
 
 /**
  *
@@ -16,11 +16,11 @@ public interface Space extends Remote
 
     public void register( Computer computer ) throws RemoteException;
 
-    public void putReady(Task<T> task) throws RemoteException;
+    public <T> void putReady(Task<T> task) throws RemoteException;
 
-    public void putWaiting(Task<T> task) throws RemoteException;
+    public <T> void putWaiting(Task<T> task) throws RemoteException;
 
-    public void sendArgument(Continuation cont, T result) throws RemoteException;
+    public <T> void sendArgument(Continuation cont, T result) throws RemoteException;
 
-    public Task<T> takeReady() throws RemoteException;
+    public <T> Task<T> takeReady() throws RemoteException;
 }
