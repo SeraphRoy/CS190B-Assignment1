@@ -22,16 +22,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         waitingClosures = new ConcurrentHashMap();
     }
 
+    // task's argumentList IS already initialized
     public void sendArgument(Continuation cont, T result) throws RemoteException{
-
+        Closure closure = waitingClosures.get(cont.getClosureId());
+        Argument argument = new Argument(result, con.getSlot());
+        closure.addArgument(argument);
     }
 
+    // task's argumentList is ready
     public void putReady(Task<T> task) throws RemoteException{
-
+        Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
+        readyClosure.put(closure);
     }
 
+    // task's argumentList IS empty
     public void putWaiting(Task<T> task) throws RemoteException{
-
+        Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
+        waitingClosure.put(closure.getClosureId, closure);
     }
 
     public void register(Computer computer) throws RemoteException{
@@ -52,8 +59,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             System.err.println("Computer exception:");
             e.printStackTrace();
         }
-
-
     }
 
     private class ComputerProxy implements Runnable{

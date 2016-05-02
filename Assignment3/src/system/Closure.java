@@ -32,6 +32,8 @@ public class Closure implements java.io.Serializable{
 
     public List<> getList(){return argumentList;}
 
+    public long getClosureId(){return closureId;}
+
     public void addArgument(Argument<T> a){
         argumentList.add(a.getIndex(), a);
         counter --;

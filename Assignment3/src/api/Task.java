@@ -18,6 +18,14 @@ public abstract class Task<V> extends Serializable, Callable<V>
 
     final private Continuation cont;
 
+    final private int argc;
+
+    public Task(Space space, List<Argument<T>> list, Continuation cont){
+        this.space = space;
+        this.argumentList = list;
+        this.cont = cont;
+    }
+
     @Override
     public void call();
 
@@ -32,4 +40,12 @@ public abstract class Task<V> extends Serializable, Callable<V>
     public void sendArgument(){
         System.err.println("You shouldn't reach this point");
     }
+
+    public List<Argument<T>> getArgumentList(){return argumentList;}
+
+    public Continuation getCont(){return cont;}
+
+    public Space getSapce(){return space;}
+
+    public int getArgc(){return argc;}
 }

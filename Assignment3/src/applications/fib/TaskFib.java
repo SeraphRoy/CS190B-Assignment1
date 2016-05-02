@@ -8,9 +8,8 @@ import java.rmi.RemoteException;
 public class TaskFib extends Task<Integer>{
 
     public TaskFib(Space space, List<Argument<T>> list, Continuation cont){
-        this.space = space;
-        this.argumentList = list;
-        this.cont = cont;
+        super(space, list, cont);
+        argc = 1;
     }
 
     @Override
@@ -39,4 +38,5 @@ public class TaskFib extends Task<Integer>{
             spawnReady();
         }
     }
+
 }
