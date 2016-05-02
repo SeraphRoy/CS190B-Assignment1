@@ -23,4 +23,6 @@ public interface Space extends Remote
     public <T> void sendArgument(Continuation cont, T result) throws RemoteException;
 
     public <T> Task<T> takeReady() throws RemoteException;
+
+    public <T> T getResult() throws RemoteException;
 }

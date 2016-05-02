@@ -12,10 +12,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SpaceImpl extends UnicastRemoteObject implements Space{
+public class SpaceImpl<T> extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
     private BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
+    private T result;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -25,8 +26,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     // task's argumentList IS already initialized
     public <T> void sendArgument(Continuation cont, T result) throws RemoteException{
         Closure closure = waitingClosure.get(cont.getClosureId());
+        if(closure == null){
+            this.result = result;
+            return;
+        }
         Argument argument = new Argument(result, cont.getSlot());
         closure.addArgument(argument);
+        if(closure.getCounter() == 0){
+            readyClosure.put(closure);
+            waitingClosure.remove(cont.getClosureId());
+        }
     }
 
     // task's argumentList is ready
@@ -48,8 +57,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public <T> Task<T> takeReady() throws RemoteException{
-
+        return readyClosure.take().getTask();
     }
+
+    public <T> T getResult() throws RemoteException{return result;}
 
     public static void main(String[] args){
         if(System.getSecurityManager() == null)

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.concurrent.Callable;
 import java.util.List;
 import java.rmi.RemoteException;
+import javax.swing.JLabel;
 
 /**
  *
@@ -11,6 +12,7 @@ import java.rmi.RemoteException;
  * @param <V> the task return type.
  */
 public abstract class Task<V> implements Serializable{
+
     final protected Space space;
 
     final protected List<Argument> argumentList;
@@ -26,6 +28,8 @@ public abstract class Task<V> implements Serializable{
     }
 
     public abstract void call();
+
+    public abstract JLabel viewResult(V result);
 
     public void spawnReady() throws RemoteException{
         System.err.println("You shouldn't reach this point");
