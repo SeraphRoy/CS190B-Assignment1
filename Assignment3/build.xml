@@ -44,7 +44,7 @@
   </target>
 
   <target name="runSpace" depends="compile" description="run the space">
-    <java classname="space.SpaceImpl" fork="true">
+    <java classname="system.SpaceImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
         <pathelement location="${build}"/>
@@ -53,7 +53,7 @@
   </target>
 
   <target name="runComputer" depends="jar" description="start a computer">
-    <java classname="computer.ComputerImpl" fork="true">
+    <java classname="system.ComputerImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
         <pathelement location="dist/all.jar"/>

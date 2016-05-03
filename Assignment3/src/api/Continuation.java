@@ -1,6 +1,6 @@
 package api;
 
-public class Continuation{
+public class Continuation implements java.io.Serializable{
     final private long closureId;
     final private int slot;
 

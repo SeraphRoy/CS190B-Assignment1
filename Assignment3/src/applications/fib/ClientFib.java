@@ -14,10 +14,10 @@ public class ClientFib extends Client{
 
     public static void main(String[] args) throws Exception{
         Client c = new ClientFib(null, "localhost");
-        Argument a = new Argument(5, 0);
+        Argument a = new Argument(1, 0);
         List<Argument> list = new ArrayList<>();
         list.add(a);
-        Continuation cont = new Continuation(1, 0);
+        Continuation cont = new Continuation(-1, 0);
         Task t = new TaskFib(c.getSpace(), list, cont);
         c.setTask(t);
         c.run();
