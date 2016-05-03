@@ -21,13 +21,15 @@ public abstract class Task implements Serializable{
 
     protected int argc;
 
+    private static long nextIds = 0;
+
     public long nextId;
 
     public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
-        this.nextId = -1;
+        this.nextId = Task.nextIds++;
     }
 
     public abstract void call() throws InterruptedException;

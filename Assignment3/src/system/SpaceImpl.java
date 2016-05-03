@@ -16,7 +16,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
     private BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
-    private BlockingQueue<Object> resultQueue;
+    private LinkedBlockingQueue<Object> resultQueue;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -26,11 +26,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     // task's argumentList IS already initialized
     public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException{
+
+        //PROBLEMATIC!!!!
         Closure closure = waitingClosure.get(cont.getClosureId());
         if(closure == null){
             this.resultQueue.put(result);
+            System.out.println(resultQueue.peek());
             return;
         }
+
+        
         Argument argument = new Argument(result, cont.getSlot());
         closure.addArgument(argument);
         if(closure.getCounter() == 0){
@@ -48,9 +53,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     // task's argumentList IS empty
     public void putWaiting(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
-        System.out.println("nani " + task.nextId);
-        task.nextId = closure.getClosureId();
-        System.out.println("masaka " + task.nextId);
+        // System.out.println("nani " + task.nextId);
+        // task.nextId = closure.getClosureId();
+        // System.out.println("masaka " + task.nextId);
         waitingClosure.put(closure.getClosureId(), closure);
     }
 

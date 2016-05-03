@@ -18,9 +18,8 @@ public class TaskFib extends Task{
     @Override
     public void spawn() throws RemoteException, InterruptedException{
         Task t = new TaskSum(space, new ArrayList<Argument>(), cont);
-        System.out.println("haha " + t.nextId);
+        System.out.println(t.nextId);
         space.putWaiting(t);
-        System.out.println("yosh " + t.nextId);
         int first = (int)argumentList.get(0).getValue();
         Argument a1 = new Argument(first-1, 0);
         Argument a2 = new Argument(first-2, 0);
@@ -51,7 +50,7 @@ public class TaskFib extends Task{
             try{
                 space.sendArgument(cont, argumentList.get(0).getValue());
             }
-            catch(RemoteException e){}
+            catch(RemoteException e){System.out.println("ERROR");}
         }
         else{
             try{

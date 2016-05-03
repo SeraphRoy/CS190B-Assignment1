@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CS190B HW2" default="compile">
+<project name="CS190B HW3" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
   <property name="build" location="bin" />
