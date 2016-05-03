@@ -37,13 +37,13 @@ public abstract class Task implements Serializable{
         return new JLabel();
     }
 
-    public void spawnReady() throws RemoteException, InterruptedException{
+    public void spawn() throws RemoteException, InterruptedException{
         System.err.println("You shouldn't reach this point");
     }
 
-    public void spawnWaiting() throws RemoteException, InterruptedException{
-        System.err.println("You shouldn't reach this point");
-    }
+    // public void spawnWaiting() throws RemoteException, InterruptedException{
+    //     System.err.println("You shouldn't reach this point");
+    // }
 
     public List<Argument> getArgumentList(){return argumentList;}
 

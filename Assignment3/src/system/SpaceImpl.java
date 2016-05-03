@@ -21,6 +21,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
+        resultQueue = new LinkedBlockingQueue<Object>();
     }
 
     // task's argumentList IS already initialized
@@ -47,7 +48,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     // task's argumentList IS empty
     public void putWaiting(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
+        System.out.println("nani " + task.nextId);
         task.nextId = closure.getClosureId();
+        System.out.println("masaka " + task.nextId);
         waitingClosure.put(closure.getClosureId(), closure);
     }
 
