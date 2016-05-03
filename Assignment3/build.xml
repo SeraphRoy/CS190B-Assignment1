@@ -61,15 +61,15 @@
     </java>
   </target>
 
-  <target name="runClientMandelbrotSet" depends="jar" description="run mandelbrot set">
-    <java classname="clients.ClientMandelbrotSet" fork="true">
+  <target name="runClientFib" depends="jar" description="run fib">
+    <java classname="applications.fib.ClientFib" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
         <pathelement location="dist/all.jar"/>
       </classpath>
     </java>
-  </target>
-  
+  </target>    
+
   <target name="runClientEuclideanTsp" depends="jar" description="run euclidean tsp">
     <java classname="clients.ClientEuclideanTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
