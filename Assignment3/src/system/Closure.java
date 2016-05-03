@@ -4,14 +4,14 @@ import api.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Closure<V> implements java.io.Serializable{
+public class Closure implements java.io.Serializable{
     private int counter;
-    final private Task<V> task;
+    final private Task task;
     final private ArrayList<Argument> argumentList;
     public static long closureIds = 0;
     private long closureId;
 
-    public <V> Closure(int argc, Task<V> task, List<Argument> list){
+    public Closure(int argc, Task task, List<Argument> list){
         counter = argc;
         this.task = task;
         closureId = Closure.closureIds++;

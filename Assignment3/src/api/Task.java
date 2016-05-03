@@ -11,7 +11,7 @@ import javax.swing.JLabel;
  * @author Peter Cappello
  * @param <V> the task return type.
  */
-public abstract class Task<V> implements Serializable{
+public abstract class Task implements Serializable{
 
     final protected Space space;
 
@@ -21,25 +21,27 @@ public abstract class Task<V> implements Serializable{
 
     protected int argc;
 
+    public long nextId;
+
     public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
+        this.nextId = -1;
     }
 
-    public abstract void call();
+    public abstract void call() throws InterruptedException;
 
-    public abstract JLabel viewResult(V result);
+    public JLabel viewResult(Object result){
+        System.err.println("You shouldn't reach this point");
+        return new JLabel();
+    }
 
-    public void spawnReady() throws RemoteException{
+    public void spawnReady() throws RemoteException, InterruptedException{
         System.err.println("You shouldn't reach this point");
     }
 
-    public void spawnWaiting() throws RemoteException{
-        System.err.println("You shouldn't reach this point");
-    }
-
-    public void sendArgument() throws RemoteException{
+    public void spawnWaiting() throws RemoteException, InterruptedException{
         System.err.println("You shouldn't reach this point");
     }
 

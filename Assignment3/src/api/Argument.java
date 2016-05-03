@@ -9,7 +9,6 @@ public class Argument implements Serializable{
         this.value = value;
         this.index = index;
     }
-
     public Object getValue(){ return value;}
 
     public int getIndex(){ return index;}

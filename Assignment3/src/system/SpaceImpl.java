@@ -12,11 +12,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class SpaceImpl<T> extends UnicastRemoteObject implements Space{
+public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
     private BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
-    private T result;
+    private BlockingQueue<Object> resultQueue;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -24,10 +24,10 @@ public class SpaceImpl<T> extends UnicastRemoteObject implements Space{
     }
 
     // task's argumentList IS already initialized
-    public <T> void sendArgument(Continuation cont, T result) throws RemoteException{
+    public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException{
         Closure closure = waitingClosure.get(cont.getClosureId());
         if(closure == null){
-            this.result = result;
+            this.resultQueue.put(result);
             return;
         }
         Argument argument = new Argument(result, cont.getSlot());
@@ -39,28 +39,29 @@ public class SpaceImpl<T> extends UnicastRemoteObject implements Space{
     }
 
     // task's argumentList is ready
-    public <T> void putReady(Task<T> task) throws RemoteException{
+    public void putReady(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
         readyClosure.put(closure);
     }
 
     // task's argumentList IS empty
-    public <T> void putWaiting(Task<T> task) throws RemoteException{
+    public void putWaiting(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task, task.getArgumentList());
+        task.nextId = closure.getClosureId();
         waitingClosure.put(closure.getClosureId(), closure);
     }
 
-    public void register(Computer computer) throws RemoteException{
+    public void register(Computer computer) throws RemoteException, InterruptedException{
         ComputerProxy c = new ComputerProxy(computer);
         new Thread(c).start();
         System.out.println("Computer #" + c.computerId + " is registered");
     }
 
-    public <T> Task<T> takeReady() throws RemoteException{
+    public Task takeReady() throws RemoteException, InterruptedException{
         return readyClosure.take().getTask();
     }
 
-    public <T> T getResult() throws RemoteException{return result;}
+    public Object getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
 
     public static void main(String[] args){
         if(System.getSecurityManager() == null)
@@ -90,13 +91,13 @@ public class SpaceImpl<T> extends UnicastRemoteObject implements Space{
             try{
                 while(true){
                     Task t = null;
-                    Result r = null;
                     try{
                         t = SpaceImpl.this.takeReady();
-                        r = computer.Execute(t);
+                        computer.Execute(t);
                     }
                     catch (RemoteException e){
-                        putReady(t);
+                        try{putReady(t);}
+                        catch(RemoteException ign){}
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }

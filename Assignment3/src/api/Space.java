@@ -1,10 +1,10 @@
 package api;
 
+import system.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-import system.*;
-
+import java.lang.InterruptedException;
 /**
  *
  * @author Peter Cappello
@@ -14,15 +14,15 @@ public interface Space extends Remote
     public static int PORT = 8001;
     public static String SERVICE_NAME = "Space";
 
-    public void register( Computer computer ) throws RemoteException;
+    public void register( Computer computer ) throws RemoteException, InterruptedException;
 
-    public <T> void putReady(Task<T> task) throws RemoteException;
+    public void putReady(Task task) throws RemoteException, InterruptedException;
 
-    public <T> void putWaiting(Task<T> task) throws RemoteException;
+    public void putWaiting(Task task) throws RemoteException, InterruptedException;
 
-    public <T> void sendArgument(Continuation cont, T result) throws RemoteException;
+    public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException;
 
-    public <T> Task<T> takeReady() throws RemoteException;
+    public Task takeReady() throws RemoteException, InterruptedException;
 
-    public <T> T getResult() throws RemoteException;
+    public Object getResult() throws RemoteException, InterruptedException;
 }
