@@ -40,7 +40,8 @@ public class TaskFib extends Task{
 
     @Override
     public JLabel viewResult(Object result){
-        Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Result is: ", (int)result);
+        //Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Result is: ", result);
+        System.out.println("Result is: " + result);
         return new JLabel();
     }
 

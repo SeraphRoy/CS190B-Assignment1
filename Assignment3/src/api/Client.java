@@ -45,7 +45,9 @@ public class Client extends JFrame{
     public void run() throws RemoteException{
         try{
             space.putReady(task);
-            view(task.viewResult(space.getResult()));
+            Object temp = space.getResult();
+            //System.out.println("yosh " + temp);
+            view(task.viewResult(temp));
         }
         catch(InterruptedException e){
             e.printStackTrace();

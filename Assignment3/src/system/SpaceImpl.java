@@ -41,8 +41,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         //System.out.println("haha " + cont.getClosureId());
         //System.out.println("yosh " + waitingClosure);
         if(closure == null){
-            System.out.println("haha " + result);
+            //System.out.println("haha " + result);
             this.resultQueue.put(result);
+            //System.out.println(resultQueue);
             return;
         }
 
