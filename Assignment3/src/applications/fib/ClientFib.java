@@ -14,7 +14,7 @@ public class ClientFib extends Client{
 
     public static void main(String[] args) throws Exception{
         Client c = new ClientFib(null, "localhost");
-        Argument a = new Argument(4, 0);
+        Argument a = new Argument(10, 0);
         List<Argument> list = new ArrayList<>();
         list.add(a);
         Continuation cont = new Continuation(-1, 0);
