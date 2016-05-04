@@ -6,7 +6,6 @@
   <property name="src" location="src" />
   <property name="javadoc" location="documents/javadoc" />
   <property name="compile.debug" value="true" />
-  <property name="serverclassname" value="computer.ComputerImpl" />
   <property name="dist" location="dist" />
   
   <macrodef name="Compile">
@@ -38,8 +37,12 @@
       <javac srcdir="${src}" destdir="${build}"/>
     </javadoc>
   </target>
-  
+
   <target name="compile" description="Compile the program">
+    <Compile srcdir="${src}" destdir="${build}" />
+  </target>
+
+  <target name="javac" description="Compile the program">
     <Compile srcdir="${src}" destdir="${build}" />
   </target>
 

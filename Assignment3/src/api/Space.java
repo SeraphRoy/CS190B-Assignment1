@@ -25,4 +25,8 @@ public interface Space extends Remote
     public Task takeReady() throws RemoteException, InterruptedException;
 
     public Object getResult() throws RemoteException, InterruptedException;
+
+    public Object getClosures() throws RemoteException, InterruptedException;
+
+    public Object getClosure() throws RemoteException, InterruptedException;
 }

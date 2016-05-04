@@ -18,7 +18,7 @@ public class TaskFib extends Task{
     @Override
     public void spawn() throws RemoteException, InterruptedException{
         Task t = new TaskSum(space, new ArrayList<Argument>(), cont);
-        System.out.println(t.nextId);
+        //System.out.println(t.id);
         space.putWaiting(t);
         int first = (int)argumentList.get(0).getValue();
         Argument a1 = new Argument(first-1, 0);
@@ -27,8 +27,8 @@ public class TaskFib extends Task{
         List<Argument> newList2 = new ArrayList<>();
         newList1.add(a1);
         newList2.add(a2);
-        Continuation newCont0 = new Continuation(t.nextId, 0);
-        Continuation newCont1 = new Continuation(t.nextId, 1);
+        Continuation newCont0 = new Continuation(t.id, 0);
+        Continuation newCont1 = new Continuation(t.id, 1);
         space.putReady(new TaskFib(space, newList1, newCont0));
         space.putReady(new TaskFib(space, newList2, newCont1));
     }
@@ -40,7 +40,7 @@ public class TaskFib extends Task{
 
     @Override
     public JLabel viewResult(Object result){
-        Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Result is: ", result);
+        Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Result is: ", (int)result);
         return new JLabel();
     }
 
