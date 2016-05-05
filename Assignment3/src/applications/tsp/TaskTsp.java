@@ -48,6 +48,7 @@ public class TaskTsp extends Task{
     };
 
     static final public double[][] DISTANCES = initializeDistances();
+    public static List<Integer> shortestTour = new ArrayList<Integer>();
 
     //final private int secondCity;
     //final private List<Integer> partialCityList;
@@ -89,10 +90,21 @@ public class TaskTsp extends Task{
     @Override
     public void call() throws InterruptedException{
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
-        if(partialCityList.size() < 5){
+        if(partialCityList.size() < 8){
             // initial value for shortestTour and its distance.
-            List<Integer> shortestTour = addPrefix(new LinkedList<>(partialCityList));
-            iterate(partialCityList, 0, shortestTour);
+            for(int i = 0; i < CITIES.length; i++)
+                shortestTour.add(i);
+
+            List<List<Integer>> allPermute = new ArrayList<>();
+            iterate(partialCityList, 0, allPermute);
+            for(List<Integer> tour : allPermute){
+                List<Integer> newTour = new ArrayList<>(tour);
+                newTour = addPrefix(newTour);
+                double currentDistance = tourDistance(newTour);
+                double shortestDistance = tourDistance(shortestTour);
+                if(currentDistance < shortestDistance)
+                    shortestTour = newTour;
+            }
             try{
                 space.sendArgument(cont, shortestTour);
             }
@@ -108,21 +120,22 @@ public class TaskTsp extends Task{
         }
     }
 
-    private void iterate( List<Integer> permutation, int k, List<Integer> shortest)
+    private void iterate( List<Integer> permutation, int k, List<List<Integer>> allPermute)
     {
         for( int i = k; i < permutation.size(); i++ )
             {
                 java.util.Collections.swap( permutation, i, k );
-                iterate( permutation, k + 1, shortest );
+                iterate( permutation, k + 1, allPermute );
                 java.util.Collections.swap( permutation, k, i );
             }
         if ( k == permutation.size() - 1 )
             {
-                List<Integer> temp = addPrefix(new LinkedList<>(permutation));
-                double currentDistance = TaskTsp.tourDistance(temp);
-                double shortestDistance = TaskTsp.tourDistance(shortest);
-                if(currentDistance < shortestDistance)
-                    shortest = new ArrayList<>(temp);
+                // List<Integer> temp = addPrefix(new LinkedList<>(permutation));
+                // double currentDistance = TaskTsp.tourDistance(temp);
+                // double shortestDistance = TaskTsp.tourDistance(shortest);
+                // if(currentDistance < shortestDistance)
+                //     shortest = new ArrayList<>(temp);
+                allPermute.add(new ArrayList(permutation));
             }
     }
 
