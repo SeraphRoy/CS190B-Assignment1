@@ -26,7 +26,4 @@ public interface Space extends Remote
 
     public Object getResult() throws RemoteException, InterruptedException;
 
-    public Object getClosures() throws RemoteException, InterruptedException;
-
-    public Object getClosure() throws RemoteException, InterruptedException;
 }

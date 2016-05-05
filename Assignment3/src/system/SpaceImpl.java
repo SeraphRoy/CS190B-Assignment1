@@ -26,13 +26,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         resultQueue = new LinkedBlockingQueue<Object>();
     }
 
-    public Object getClosures(){
-        return readyClosure;
-    }
-    public Object getClosure(){
-        return waitingClosure.toString();
-    }
-
     // task's argumentList IS already initialized
     public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException{
 

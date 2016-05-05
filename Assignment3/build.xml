@@ -73,8 +73,8 @@
     </java>
   </target>    
 
-  <target name="runClientEuclideanTsp" depends="jar" description="run euclidean tsp">
-    <java classname="clients.ClientEuclideanTsp" fork="true">
+  <target name="runClientTsp" depends="jar" description="run tsp">
+    <java classname="applications.tsp.ClientTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <classpath>
         <pathelement location="dist/all.jar"/>
