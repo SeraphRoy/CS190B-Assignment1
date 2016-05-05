@@ -21,7 +21,7 @@ public abstract class Task implements Serializable{
 
     protected int argc;
 
-    private static long ids = 0;
+    //private static long ids = 0;
 
     //successor's closure id
     public long id;

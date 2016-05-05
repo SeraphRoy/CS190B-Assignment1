@@ -22,18 +22,18 @@ public class TaskTsp extends Task{
 
     static final public double[][] CITIES =
     {
-        // { 1, 1 },
-        // { 8, 1 },
-        // { 8, 8 },
-        // { 1, 8 },
-        // { 2, 2 },
-        // { 7, 2 },
-        // { 7, 7 },
-        // { 2, 7 },
-        // { 3, 3 },
-        // { 6, 3 },
-        // { 6, 6 },
-        // { 3, 6 }
+        { 1, 1 },
+        { 8, 1 },
+        { 8, 8 },
+        { 1, 8 },
+        { 2, 2 },
+        { 7, 2 },
+        { 7, 7 },
+        { 2, 7 },
+        { 3, 3 },
+        { 6, 3 },
+        { 6, 6 },
+        { 3, 6 }
 
         // { 6, 3 },
         // { 2, 2 },
@@ -45,17 +45,18 @@ public class TaskTsp extends Task{
         // { 6, 5 },
         // { 1, 3 },
         // { 6, 6 }
-        { 0, 0 },
-        { 1, 1 },
-        { 2, 0 },
-        { 3, 1 },
-        { 4, 0 },
-        { 5, 1 },
-        { 6, 0 },
-        { 7, 1 },
-        { 8, 0 },
-        { 9, 1 },
-        { 10, 0 }
+
+        // { 0, 0 },
+        // { 1, 1 },
+        // { 2, 0 },
+        // { 3, 1 },
+        // { 4, 0 },
+        // { 5, 1 },
+        // { 6, 0 },
+        // { 7, 1 },
+        // { 8, 0 },
+        // { 9, 1 },
+        // { 10, 0 }
     };
 
     static final public double[][] DISTANCES = initializeDistances();
@@ -101,7 +102,7 @@ public class TaskTsp extends Task{
     @Override
     public void call() throws InterruptedException{
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
-        if(partialCityList.size() < 8){
+        if(partialCityList.size() < 10){
             // initial value for shortestTour and its distance.
             for(int i = 0; i < CITIES.length; i++)
                 shortestTour.add(i);
