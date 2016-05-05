@@ -37,7 +37,7 @@ public class Closure implements java.io.Serializable{
 
     public long getClosureId(){return closureId;}
 
-    public void addArgument(Argument a){
+    public synchronized void addArgument(Argument a){
         // System.out.println(a.getIndex() + " yosh");
         // System.out.println(argumentList.size());
         // System.out.println(argc);

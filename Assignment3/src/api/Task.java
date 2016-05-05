@@ -30,7 +30,8 @@ public abstract class Task implements Serializable{
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
-        this.id = Task.ids++;
+        //this.id = Task.ids++;
+        this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
     }
 
     public abstract void call() throws InterruptedException;
