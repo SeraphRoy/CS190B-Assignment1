@@ -29,23 +29,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     // task's argumentList IS already initialized
     public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException{
 
-        //PROBLEMATIC? Maybe..
         Closure closure = waitingClosure.get(cont.getClosureId());
-        //System.out.println("haha " + cont.getClosureId());
-        //System.out.println("yosh " + waitingClosure);
         if(closure == null){
-            //System.out.println("haha " + result);
             this.resultQueue.put(result);
-            //System.out.println(resultQueue);
             return;
         }
 
         Argument argument = new Argument(result, cont.getSlot());
-        //System.out.println(closure.getList());
         closure.addArgument(argument);
-        //System.out.println(closure.getList());
         if(closure.getCounter() == 0){
-            //System.out.println("nani");
             readyClosure.put(closure);
             waitingClosure.remove(cont.getClosureId());
         }
@@ -60,9 +52,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     // task's argumentList IS empty
     public void putWaiting(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task);
-        // System.out.println("nani " + task.nextId);
-        // task.nextId = closure.getClosureId();
-        // System.out.println("masaka " + task.nextId);
         waitingClosure.put(closure.getClosureId(), closure);
     }
 

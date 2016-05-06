@@ -29,8 +29,4 @@ public class TaskCompose extends Task{
          return tour;
      }
 
-    @Override
-    public boolean needToCompute(){
-        return true;
-    }
 }

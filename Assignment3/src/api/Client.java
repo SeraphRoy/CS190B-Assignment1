@@ -41,7 +41,6 @@ public class Client extends JFrame{
         setVisible(true);
     }
 
-    //need to implement
     public void run() throws RemoteException{
         try{
             space.putReady(task);

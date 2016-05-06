@@ -8,8 +8,9 @@ import javax.swing.JLabel;
 
 /**
  *
- * @author Peter Cappello
- * @param <V> the task return type.
+ * @author Peter Cappello, Yanxi Chen
+ * The client should override spawn(), spawnNext(), generateArgument(), and needToCompute() for general tasks,
+ * and only the last two for compose tasks.
  */
 public abstract class Task implements Serializable{
 
@@ -23,7 +24,6 @@ public abstract class Task implements Serializable{
 
     private static long ids = 0;
 
-    //successor's closure id
     public long id;
 
     public Task(Space space, List<Argument> list, Continuation cont){
@@ -75,11 +75,11 @@ public abstract class Task implements Serializable{
 
     public abstract Object generateArgument();
 
-    public abstract boolean needToCompute();
-
-    // public void spawnWaiting() throws RemoteException, InterruptedException{
-    //     System.err.println("You shouldn't reach this point");
-    // }
+    //default is true for compose tasks
+    //normal tasks NEED override this
+    public boolean needToCompute(){
+        return true;
+    }
 
     public List<Argument> getArgumentList(){return argumentList;}
 

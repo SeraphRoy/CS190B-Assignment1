@@ -18,8 +18,4 @@ public class TaskSum extends Task{
         return first+second;
     }
 
-    @Override
-    public boolean needToCompute(){
-        return true;
-    }
 }
