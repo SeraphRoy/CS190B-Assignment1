@@ -21,7 +21,7 @@ public abstract class Task implements Serializable{
 
     protected int argc;
 
-    //private static long ids = 0;
+    private static long ids = 0;
 
     //successor's closure id
     public long id;
@@ -30,20 +30,52 @@ public abstract class Task implements Serializable{
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
-        //this.id = Task.ids++;
-        this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
+        this.id = Task.ids++;
     }
 
-    public abstract void call() throws InterruptedException;
+    public void call() throws InterruptedException{
+        if(needToCompute()){
+            Object o = generateArgument();
+            try{
+                space.sendArgument(cont, o);
+            }
+            catch(RemoteException e){
+                System.err.println("ERROR");
+            }
+        }
+        else{
+            try{
+                spawn(spawnNext());
+            }
+            catch(RemoteException e){
+                System.err.println("ERROR");
+            }
+        }
+    }
+
 
     public JLabel viewResult(Object result){
         System.err.println("You shouldn't reach this point");
         return new JLabel();
     }
 
-    public void spawn() throws RemoteException, InterruptedException{
+    public void spawn(Task t) throws RemoteException, InterruptedException{
         System.err.println("You shouldn't reach this point");
     }
+
+    //return the task that has been put into the space
+    public Task spawnNext() throws RemoteException, InterruptedException{
+        System.err.println("You shouldn't reach this point");
+        return null;
+    }
+
+    public Continuation generateCont(int slot, Task t){
+        return new Continuation(t.id, slot);
+    }
+
+    public abstract Object generateArgument();
+
+    public abstract boolean needToCompute();
 
     // public void spawnWaiting() throws RemoteException, InterruptedException{
     //     System.err.println("You shouldn't reach this point");

@@ -16,10 +16,14 @@ public class TaskFib extends Task{
     }
 
     @Override
-    public void spawn() throws RemoteException, InterruptedException{
+    public Task spawnNext() throws RemoteException, InterruptedException{
         Task t = new TaskSum(space, new ArrayList<Argument>(), cont);
-        //System.out.println(t.id);
         space.putWaiting(t);
+        return t;
+    }
+
+    @Override
+    public void spawn(Task t) throws RemoteException, InterruptedException{
         int first = (int)argumentList.get(0).getValue();
         Argument a1 = new Argument(first-1, 0);
         Argument a2 = new Argument(first-2, 0);
@@ -27,37 +31,26 @@ public class TaskFib extends Task{
         List<Argument> newList2 = new ArrayList<>();
         newList1.add(a1);
         newList2.add(a2);
-        Continuation newCont0 = new Continuation(t.id, 0);
-        Continuation newCont1 = new Continuation(t.id, 1);
+        Continuation newCont0 = generateCont(0, t);
+        Continuation newCont1 = generateCont(1, t);
         space.putReady(new TaskFib(space, newList1, newCont0));
         space.putReady(new TaskFib(space, newList2, newCont1));
     }
 
-    // @Override
-    // public void spawnWaiting() throws RemoteException, InterruptedException{
-    //     space.putWaiting(new TaskSum(space, new ArrayList<Argument>(), cont));
-    // }
-
     @Override
     public JLabel viewResult(Object result){
-        //Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Result is: ", result);
         System.out.println("Result is: " + result);
         return new JLabel();
     }
 
     @Override
-    public void call() throws InterruptedException{
-        if((int) argumentList.get(0).getValue() < 2){
-            try{
-                space.sendArgument(cont, argumentList.get(0).getValue());
-            }
-            catch(RemoteException e){System.out.println("ERROR");}
-        }
-        else{
-            try{
-                spawn();
-            }
-            catch(RemoteException e){}
-        }
+    public Object generateArgument(){
+        return argumentList.get(0).getValue();
     }
+
+    @Override
+    public boolean needToCompute(){
+        return (int)argumentList.get(0).getValue() < 2;
+    }
+
 }

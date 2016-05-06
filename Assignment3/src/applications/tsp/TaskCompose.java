@@ -14,21 +14,23 @@ public class TaskCompose extends Task{
         this.argc = argc;
     }
 
+     @Override
+     public Object generateArgument(){
+         List<Integer> tour = new LinkedList<>();
+         double shortestTourDistance = Double.MAX_VALUE;
+         for(Argument argument : argumentList){
+             List<Integer> path = (List<Integer>)argument.getValue();
+             double tourDistance = TaskTsp.tourDistance(path);
+             if(tourDistance < shortestTourDistance){
+                 shortestTourDistance = tourDistance;
+                 tour = new ArrayList<>(path);
+             }
+         }
+         return tour;
+     }
+
     @Override
-    public void call() throws InterruptedException{
-        List<Integer> tour = new LinkedList<>();
-        double shortestTourDistance = Double.MAX_VALUE;
-        for(Argument argument : argumentList){
-            List<Integer> path = (List<Integer>)argument.getValue();
-            double tourDistance = TaskTsp.tourDistance(path);
-            if(tourDistance < shortestTourDistance){
-                shortestTourDistance = tourDistance;
-                tour = new ArrayList<>(path);
-            }
-        }
-        try{
-            space.sendArgument(cont, tour);
-        }
-        catch(RemoteException e){}
+    public boolean needToCompute(){
+        return true;
     }
 }

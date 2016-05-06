@@ -62,8 +62,6 @@ public class TaskTsp extends Task{
     static final public double[][] DISTANCES = initializeDistances();
     public static List<Integer> shortestTour = new ArrayList<Integer>();
 
-    //final private int secondCity;
-    //final private List<Integer> partialCityList;
 
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
@@ -72,10 +70,16 @@ public class TaskTsp extends Task{
         argc = 2;
     }
 
-    public void spawn() throws RemoteException, InterruptedException{
+    @Override
+    public Task spawnNext() throws RemoteException, InterruptedException{
         List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
         Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
         space.putWaiting(t);
+        return t;
+    }
+
+    @Override
+    public void spawn(Task t) throws RemoteException, InterruptedException{
         int count = 0;
         for(int i : (List<Integer>)argumentList.get(1).getValue()){
             List<Integer> fixedList = new ArrayList<>();
@@ -93,43 +97,36 @@ public class TaskTsp extends Task{
             List<Argument> newList = new ArrayList<>();
             newList.add(argument0);
             newList.add(argument1);
-            Continuation newCont = new Continuation(t.id, count);
+            Continuation newCont = generateCont(count, t);
             count ++;
             space.putReady(new TaskTsp(space, newList, newCont));
         }
     }
 
     @Override
-    public void call() throws InterruptedException{
+    public Object generateArgument(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
-        if(partialCityList.size() < 10){
-            // initial value for shortestTour and its distance.
-            for(int i = 0; i < CITIES.length; i++)
-                shortestTour.add(i);
+        // initial value for shortestTour and its distance.
+        for(int i = 0; i < CITIES.length; i++)
+            shortestTour.add(i);
 
-            List<List<Integer>> allPermute = new ArrayList<>();
-            iterate(partialCityList, 0, allPermute);
-            for(List<Integer> tour : allPermute){
-                List<Integer> newTour = new ArrayList<>(tour);
-                newTour = addPrefix(newTour);
-                double currentDistance = tourDistance(newTour);
-                double shortestDistance = tourDistance(shortestTour);
-                if(currentDistance < shortestDistance)
-                    shortestTour = newTour;
-            }
-            try{
-                space.sendArgument(cont, shortestTour);
-            }
-            catch(RemoteException e){
-                System.out.println("ERROR");
-            }
+        List<List<Integer>> allPermute = new ArrayList<>();
+        iterate(partialCityList, 0, allPermute);
+        for(List<Integer> tour : allPermute){
+            List<Integer> newTour = new ArrayList<>(tour);
+            newTour = addPrefix(newTour);
+            double currentDistance = tourDistance(newTour);
+            double shortestDistance = tourDistance(shortestTour);
+            if(currentDistance < shortestDistance)
+                shortestTour = newTour;
         }
-        else{
-            try{
-                spawn();
-            }
-            catch(RemoteException e){}
-        }
+        return shortestTour;
+    }
+
+    @Override
+    public boolean needToCompute(){
+        List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
+        return partialCityList.size() < 10;
     }
 
     private void iterate( List<Integer> permutation, int k, List<List<Integer>> allPermute)
@@ -142,11 +139,6 @@ public class TaskTsp extends Task{
             }
         if ( k == permutation.size() - 1 )
             {
-                // List<Integer> temp = addPrefix(new LinkedList<>(permutation));
-                // double currentDistance = TaskTsp.tourDistance(temp);
-                // double shortestDistance = TaskTsp.tourDistance(shortest);
-                // if(currentDistance < shortestDistance)
-                //     shortest = new ArrayList<>(temp);
                 allPermute.add(new ArrayList(permutation));
             }
     }
@@ -154,8 +146,6 @@ public class TaskTsp extends Task{
 
     private List<Integer> addPrefix( List<Integer> partialTour )
     {
-        // partialTour.add( 0, secondCity );
-        // partialTour.add( 0, 0 );
         for(int i : (List<Integer>)argumentList.get(0).getValue()){
             partialTour.add(0, i);
         }
