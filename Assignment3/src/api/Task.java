@@ -22,13 +22,15 @@ public abstract class Task implements Serializable{
 
     protected int argc;
 
+    private static long ids = 0;
+
     public long id;
 
     public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
-        this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
+        this.id = Task.ids++;
     }
 
     public void call() throws InterruptedException{
