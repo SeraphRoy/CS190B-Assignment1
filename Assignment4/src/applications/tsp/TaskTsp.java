@@ -70,17 +70,16 @@ public class TaskTsp extends Task{
         argc = 2;
     }
 
-    @Override
-    public Task spawnNext() throws RemoteException, InterruptedException{
-        List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
-        Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
-        space.putWaiting(t);
-        return t;
+    public TaskTsp(Space space, List<Argument> list){
+        super(space, list);
+        argc = 2;
     }
 
     @Override
-    public void spawn(Task t) throws RemoteException, InterruptedException{
-        int count = 0;
+    public SpawnResult spawn() throws RemoteException, InterruptedException{
+        List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
+        Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
+        List<Task> list = new ArrayList<>();
         for(int i : (List<Integer>)argumentList.get(1).getValue()){
             List<Integer> fixedList = new ArrayList<>();
             List<Integer> partialList = new ArrayList<>();
@@ -97,10 +96,9 @@ public class TaskTsp extends Task{
             List<Argument> newList = new ArrayList<>();
             newList.add(argument0);
             newList.add(argument1);
-            Continuation newCont = generateCont(count, t);
-            count ++;
-            space.putReady(new TaskTsp(space, newList, newCont));
+            list.add(new TaskTsp(space, newList));
         }
+        return new SpawnResult(t, list);
     }
 
     @Override

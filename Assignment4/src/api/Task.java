@@ -18,7 +18,7 @@ public abstract class Task implements Serializable, Runnable{
 
     final protected List<Argument> argumentList;
 
-    final protected Continuation cont;
+    protected Continuation cont;
 
     protected int argc;
 
@@ -28,6 +28,13 @@ public abstract class Task implements Serializable, Runnable{
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
+        this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
+    }
+
+    public Task(Space space, List<Argument> list){
+        this.space = space;
+        this.argumentList = list;
+        this.cont = null;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
     }
 
@@ -43,7 +50,13 @@ public abstract class Task implements Serializable, Runnable{
         }
         else{
             try{
-                spawn(spawnNext());
+                SpawnResult result  = spawn();
+                space.putWaiting(result.successor);
+                for(int i = 0; i < result.subTasks.size(); i++){
+                    Continuation cont = generateCont(i, result.successor);
+                    result.subTasks.get(i).cont = cont;
+                    space.putReady(result.subTasks.get(i));
+                }
             }
             catch(Exception e){
                 System.err.println("ERROR");
@@ -57,12 +70,7 @@ public abstract class Task implements Serializable, Runnable{
         return new JLabel();
     }
 
-    public void spawn(Task t) throws RemoteException, InterruptedException{
-        System.err.println("You shouldn't reach this point");
-    }
-
-    //return the task that has been put into the space
-    public Task spawnNext() throws RemoteException, InterruptedException{
+    public SpawnResult spawn() throws RemoteException, InterruptedException{
         System.err.println("You shouldn't reach this point");
         return null;
     }
@@ -86,4 +94,15 @@ public abstract class Task implements Serializable, Runnable{
     public Space getSapce(){return space;}
 
     public int getArgc(){return argc;}
+
+    public class SpawnResult{
+        public Task successor;
+        // the tasks should be ordered according to the slot#
+        protected List<Task> subTasks;
+
+        public SpawnResult(Task successor, List<Task> subTasks){
+            this.successor = successor;
+            this.subTasks = subTasks;
+        }
+    }
 }

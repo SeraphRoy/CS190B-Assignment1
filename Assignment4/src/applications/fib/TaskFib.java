@@ -15,15 +15,14 @@ public class TaskFib extends Task{
         argc = 1;
     }
 
-    @Override
-    public Task spawnNext() throws RemoteException, InterruptedException{
-        Task t = new TaskSum(space, new ArrayList<Argument>(), cont);
-        space.putWaiting(t);
-        return t;
+    public TaskFib(Space space, List<Argument> list){
+        super(space, list);
+        argc = 1;
     }
 
     @Override
-    public void spawn(Task t) throws RemoteException, InterruptedException{
+    public SpawnResult spawn() throws RemoteException, InterruptedException{
+        Task t = new TaskSum(space, new ArrayList<Argument>(), cont);
         int first = (int)argumentList.get(0).getValue();
         Argument a1 = new Argument(first-1, 0);
         Argument a2 = new Argument(first-2, 0);
@@ -31,10 +30,12 @@ public class TaskFib extends Task{
         List<Argument> newList2 = new ArrayList<>();
         newList1.add(a1);
         newList2.add(a2);
-        Continuation newCont0 = generateCont(0, t);
-        Continuation newCont1 = generateCont(1, t);
-        space.putReady(new TaskFib(space, newList1, newCont0));
-        space.putReady(new TaskFib(space, newList2, newCont1));
+        Task task1 = new TaskFib(space, newList1);
+        Task task2 = new TaskFib(space, newList2);
+        List<Task> list = new ArrayList<>();
+        list.add(task1);
+        list.add(task2);
+        return new SpawnResult(t, list);
     }
 
     @Override

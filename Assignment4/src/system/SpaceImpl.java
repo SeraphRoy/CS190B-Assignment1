@@ -101,7 +101,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     catch (RemoteException e){
                         try{putReady(t);}
-                        catch(RemoteException ign){}
+                        catch(RemoteException a){
+                            System.err.println("ERROR!!");
+
+                        }
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }
