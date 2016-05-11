@@ -45,13 +45,24 @@ public abstract class Task implements Serializable, Runnable{
                 space.sendArgument(cont, o);
             }
             catch(Exception e){
-                System.err.println("ERROR");
+                System.err.println("ERROR IN SENDING ARGUMENT");
             }
         }
         else{
             try{
                 SpawnResult result  = spawn();
                 space.putWaiting(result.successor);
+
+                // for(int i = 1; i < result.subTasks.size(); i++){
+                //     Continuation cont = generateCont(i, result.successor);
+                //     result.subTasks.get(i).cont = cont;
+                //     space.putReady(result.subTasks.get(i));
+                // }
+                // Continuation cont = generateCont(0, result.successor);
+                // Task task = result.subTasks.get(0);
+                // task.cont = cont;
+                // task.run();
+
                 for(int i = 0; i < result.subTasks.size(); i++){
                     Continuation cont = generateCont(i, result.successor);
                     result.subTasks.get(i).cont = cont;
@@ -59,7 +70,7 @@ public abstract class Task implements Serializable, Runnable{
                 }
             }
             catch(Exception e){
-                System.err.println("ERROR");
+                System.err.println("ERROR IN PRODUCING SUBTASKS");
             }
         }
     }
