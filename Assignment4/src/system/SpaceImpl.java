@@ -14,11 +14,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SpaceImpl extends UnicastRemoteObject implements Space{
+public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
     private static int computerIds = 0;
     private BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
+
+    public static Task task;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -67,6 +69,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public Object getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
 
+    public void takeReadyToComputer() throws RemoteException, InterruptedException{
+        SpaceImpl.task = readyClosure.take().getTask();
+    }
+
+    public void run(){
+        try{
+            takeReadyToComputer();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args){
         if(System.getSecurityManager() == null)
             System.setSecurityManager(new SecurityManager());
@@ -93,10 +108,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         @Override
         public void run(){
             try{
+                Task t = null;
+                Thread thread = new Thread(SpaceImpl.this);
                 while(true){
-                    Task t = null;
                     try{
-                        t = SpaceImpl.this.takeReady();
+                        if(SpaceImpl.task == null)
+                            t = SpaceImpl.this.takeReady();
+                        else
+                            t = SpaceImpl.task;
+                        if(thread.getState() == Thread.State.RUNNABLE)
+                            thread.start();
                         computer.Execute(t);
                     }
                     catch (RemoteException e){

@@ -14,6 +14,8 @@ import javax.swing.JLabel;
  */
 public abstract class Task implements Serializable, Runnable{
 
+    public static boolean useA = false;
+
     final protected Space space;
 
     final protected List<Argument> argumentList;
@@ -53,20 +55,23 @@ public abstract class Task implements Serializable, Runnable{
                 SpawnResult result  = spawn();
                 space.putWaiting(result.successor);
 
-                // for(int i = 1; i < result.subTasks.size(); i++){
-                //     Continuation cont = generateCont(i, result.successor);
-                //     result.subTasks.get(i).cont = cont;
-                //     space.putReady(result.subTasks.get(i));
-                // }
-                // Continuation cont = generateCont(0, result.successor);
-                // Task task = result.subTasks.get(0);
-                // task.cont = cont;
-                // task.run();
-
-                for(int i = 0; i < result.subTasks.size(); i++){
-                    Continuation cont = generateCont(i, result.successor);
-                    result.subTasks.get(i).cont = cont;
-                    space.putReady(result.subTasks.get(i));
+                if(Task.useA){
+                    for(int i = 1; i < result.subTasks.size(); i++){
+                        Continuation cont = generateCont(i, result.successor);
+                        result.subTasks.get(i).cont = cont;
+                        space.putReady(result.subTasks.get(i));
+                    }
+                    Continuation cont = generateCont(0, result.successor);
+                    Task task = result.subTasks.get(0);
+                    task.cont = cont;
+                    task.run();
+                }
+                else{
+                    for(int i = 0; i < result.subTasks.size(); i++){
+                        Continuation cont = generateCont(i, result.successor);
+                        result.subTasks.get(i).cont = cont;
+                        space.putReady(result.subTasks.get(i));
+                    }
                 }
             }
             catch(Exception e){

@@ -73,9 +73,29 @@
     </java>
   </target>    
 
+  <target name="runClientFibWithA" depends="jar" description="run fib with A">
+    <java classname="applications.fib.ClientFib" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <arg value="true"/>
+      <classpath>
+        <pathelement location="dist/all.jar"/>
+      </classpath>
+    </java>
+  </target>    
+
   <target name="runClientTsp" depends="jar" description="run tsp">
     <java classname="applications.tsp.ClientTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/all.jar"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="runClientTspWithA" depends="jar" description="run tsp with A">
+    <java classname="applications.tsp.ClientTsp" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <arg value="true"/>
       <classpath>
         <pathelement location="dist/all.jar"/>
       </classpath>
