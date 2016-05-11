@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CS190B HW3" default="compile">
+
+  <property environment="env"/> <!-- load the environment variables -->
+  <property name="build" location="bin" />
+  <property name="src" location="src" />
+  <property name="javadoc" location="documents/javadoc" />
+  <property name="compile.debug" value="true" />
+  <property name="dist" location="dist" />
+  
+  <macrodef name="Compile">
+    <attribute name="srcdir" />
+    <attribute name="destdir" />
+    <element name="compileoptions" implicit="true" optional="true" />
+    <sequential>
+      <mkdir dir="@{destdir}" />
+      <depend srcdir="${srcdir}" destdir="${destdir}" />
+      <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="${compile.debug}">
+        <!--<compilerarg value="-Xlint:unchecked" />-->
+        <!--<compilearg value="-Xlint:deprecation" />-->
+      </javac>
+    </sequential>
+  </macrodef>
+
+  <target name="jar" depends="compile" description="jar the program">
+    <delete dir="${dist}" quiet="true" />
+    <mkdir dir="${dist}"/>
+    <!-- Make computer jar file -->
+    <jar jarfile="${dist}/all.jar" basedir="${build}"/>
+  </target>
+  
+  <target name="javadoc" depends="compile" description="create javadoc for the project">
+    <javadoc destdir="${javadoc}" author="true" version="true" use="true">
+      <!--<fileset dir="${src}" includes="**/*.java"/>-->
+      <mkdir dir="${build}"/>
+      <!--  Compile the java code from ${src} into ${build}  -->
+      <javac srcdir="${src}" destdir="${build}"/>
+    </javadoc>
+  </target>
+
+  <target name="compile" description="Compile the program">
+    <Compile srcdir="${src}" destdir="${build}" />
+  </target>
+
+  <target name="javac" description="Compile the program">
+    <Compile srcdir="${src}" destdir="${build}" />
+  </target>
+
+  <target name="runSpace" depends="compile" description="run the space">
+    <java classname="system.SpaceImpl" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="${build}"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="runComputer" depends="jar" description="start a computer">
+    <java classname="system.ComputerImpl" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/all.jar"/>
+      </classpath>
+    </java>
+  </target>
+
+  <target name="runClientFib" depends="jar" description="run fib">
+    <java classname="applications.fib.ClientFib" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/all.jar"/>
+      </classpath>
+    </java>
+  </target>    
+
+  <target name="runClientTsp" depends="jar" description="run tsp">
+    <java classname="applications.tsp.ClientTsp" fork="true">
+      <jvmarg value="-Djava.security.policy=policy"/>
+      <classpath>
+        <pathelement location="dist/all.jar"/>
+      </classpath>
+    </java>
+  </target>
+  
+  <target name="clean" description="delete unnecessary files and directories">
+    <delete dir="${build}" quiet="true" />
+    <delete dir="${javadoc}" quiet="true" />
+    <delete dir="${dist}" quiet="true" />
+  </target>
+
+</project>
+
