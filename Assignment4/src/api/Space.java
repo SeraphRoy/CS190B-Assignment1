@@ -27,4 +27,6 @@ public interface Space extends Remote
     public Object getResult() throws RemoteException, InterruptedException;
 
     public void exit() throws RemoteException;
+
+    public static boolean MULTICORE = false;
 }

@@ -12,6 +12,7 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.Naming;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,15 +22,25 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public int numTasks = 0;
 
-    public ComputerImpl() throws RemoteException{}
+    private final BlockingQueue<Task> tasksQ;
+
+    public final int coreNum;
+
+    public ComputerImpl() throws RemoteException{
+        tasksQ = new LinkedBlockingQueue<>();
+        coreNum = Space.MULTICORE ? Runtime.getRuntime().availableProcessors() : 1;
+        for(int i = 0; i < coreNum; i++){
+            new Thread(new Core(tasksQ)).start();
+        }
+    }
 
     public void Execute(Task task) throws RemoteException{
         numTasks++;
         final long taskStartTime = System.nanoTime();
         try{
-            // if(Runtime.getRuntime().availableProcessors() > 0)
-            //     new Thread(task).start();
-            task.run();
+            //task.run();
+            //if(tasksQ.size() == 0)
+            tasksQ.put(task);
         }
         catch(Exception e){
             e.printStackTrace();
