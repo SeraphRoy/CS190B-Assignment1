@@ -45,7 +45,7 @@ public abstract class Task implements Serializable, Runnable{
                 space.sendArgument(cont, o);
             }
             catch(Exception e){
-                System.err.println("ERROR");
+                System.err.println("ERROR IN SENDING ARGUMENT");
             }
         }
         else{
@@ -59,7 +59,7 @@ public abstract class Task implements Serializable, Runnable{
                 }
             }
             catch(Exception e){
-                System.err.println("ERROR");
+                System.err.println("ERROR IN PRODUCING SUBTASKS");
             }
         }
     }

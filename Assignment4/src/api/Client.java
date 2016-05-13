@@ -47,6 +47,7 @@ public class Client extends JFrame{
             Object temp = space.getResult();
             //System.out.println("yosh " + temp);
             view(task.viewResult(temp));
+            space.exit();
         }
         catch(InterruptedException e){
             e.printStackTrace();
