@@ -22,32 +22,29 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public int numTasks = 0;
 
-    private final BlockingQueue<Task> tasksQ;
-
     public final int coreNum;
 
     public ComputerImpl() throws RemoteException{
-        tasksQ = new LinkedBlockingQueue<>();
         coreNum = Space.MULTICORE ? Runtime.getRuntime().availableProcessors() : 1;
         for(int i = 0; i < coreNum; i++){
-            new Thread(new Core(tasksQ)).start();
+            new Thread(new Core(Computer.tasksQ)).start();
         }
     }
 
     public void Execute(Task task) throws RemoteException{
         numTasks++;
-        final long taskStartTime = System.nanoTime();
         try{
             //task.run();
             //if(tasksQ.size() == 0)
-            tasksQ.put(task);
-        }
-        catch(Exception e){
+            Computer.tasksQ.put(task);
+            if(Computer.tasksQ.size() > 10)
+                synchronized(Computer.tasksQ){
+                    Computer.tasksQ.wait();
+                }
+
+        }        catch(Exception e){
             e.printStackTrace();
         }
-        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-        Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-            .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         return;
     }
 
@@ -56,7 +53,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         System.setSecurityManager( new SecurityManager() );
         final String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
         final Space space = (Space) Naming.lookup(url);
-        ComputerImpl computer = new ComputerImpl();
+        Computer computer = new ComputerImpl();
         try{
             space.register(computer);
         }
