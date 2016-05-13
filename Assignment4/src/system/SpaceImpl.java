@@ -13,16 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
 
-public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
+public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
     private BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
-    private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
-
-    public static Task task;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -61,7 +57,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
 
     public void register(Computer computer) throws RemoteException, InterruptedException{
         ComputerProxy c = new ComputerProxy(computer);
-        computerProxies.put( computer, c);
         new Thread(c).start();
         System.out.println("Computer #" + c.computerId + " is registered");
     }
@@ -71,26 +66,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
     }
 
     public Object getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
-
-    public void takeReadyToComputer() throws RemoteException, InterruptedException{
-        SpaceImpl.task = readyClosure.take().getTask();
-    }
-
-    @Override
-    public void exit() throws RemoteException
-    {
-        computerProxies.values().forEach( proxy -> proxy.exit() );
-        //System.exit( 0 );
-    }
-
-    public void run(){
-        try{
-            takeReadyToComputer();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args){
         if(System.getSecurityManager() == null)
@@ -115,8 +90,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
             this.computer = computer;
         }
 
-        public void exit() { try { computer.exit(); } catch ( RemoteException ignore ) {} }
-
         @Override
         public void run(){
             try{
@@ -127,10 +100,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space, Runnable{
                         computer.Execute(t);
                     }
                     catch (RemoteException e){
-                        try{
-                            putReady(t);
-                            computerProxies.remove(computer);
-                        }
+                        try{putReady(t);}
                         catch(RemoteException a){
                             System.err.println("ERROR!!");
 

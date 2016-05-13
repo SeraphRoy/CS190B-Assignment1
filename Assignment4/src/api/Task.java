@@ -14,8 +14,6 @@ import javax.swing.JLabel;
  */
 public abstract class Task implements Serializable, Runnable{
 
-    public static boolean useA = false;
-
     final protected Space space;
 
     final protected List<Argument> argumentList;
@@ -47,35 +45,21 @@ public abstract class Task implements Serializable, Runnable{
                 space.sendArgument(cont, o);
             }
             catch(Exception e){
-                System.err.println("ERROR IN SENDING ARGUMENT");
+                System.err.println("ERROR");
             }
         }
         else{
             try{
                 SpawnResult result  = spawn();
                 space.putWaiting(result.successor);
-
-                if(Task.useA){
-                    for(int i = 1; i < result.subTasks.size(); i++){
-                        Continuation cont = generateCont(i, result.successor);
-                        result.subTasks.get(i).cont = cont;
-                        space.putReady(result.subTasks.get(i));
-                    }
-                    Continuation cont = generateCont(0, result.successor);
-                    Task task = result.subTasks.get(0);
-                    task.cont = cont;
-                    task.run();
-                }
-                else{
-                    for(int i = 0; i < result.subTasks.size(); i++){
-                        Continuation cont = generateCont(i, result.successor);
-                        result.subTasks.get(i).cont = cont;
-                        space.putReady(result.subTasks.get(i));
-                    }
+                for(int i = 0; i < result.subTasks.size(); i++){
+                    Continuation cont = generateCont(i, result.successor);
+                    result.subTasks.get(i).cont = cont;
+                    space.putReady(result.subTasks.get(i));
                 }
             }
             catch(Exception e){
-                System.err.println("ERROR IN PRODUCING SUBTASKS");
+                System.err.println("ERROR");
             }
         }
     }
