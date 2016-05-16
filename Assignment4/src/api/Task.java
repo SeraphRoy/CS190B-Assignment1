@@ -40,7 +40,7 @@ public abstract class Task implements Serializable{
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
     }
 
-    public Object execute(){
+    public void execute(){
         if(needToCompute()){
             Object o = generateArgument();
             try{
@@ -50,10 +50,8 @@ public abstract class Task implements Serializable{
                 System.err.println("ERROR IN SENDING ARGUMENT");
                 e.printStackTrace();
             }
-            return null;
         }
         else{
-            SpawnResult result = null;
             try{
                 SpawnResult result  = spawn();
                 space.pushSpawnResult(result);
@@ -69,7 +67,6 @@ public abstract class Task implements Serializable{
             catch(InterruptedException ex){
                 ex.printStackTrace();
             }
-            return result;
         }
     }
 
