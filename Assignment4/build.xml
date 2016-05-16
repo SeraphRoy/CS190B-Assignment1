@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CS190B HW3" default="compile">
+<project name="CS190B HW4" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
   <property name="build" location="bin" />
@@ -16,8 +16,8 @@
       <mkdir dir="@{destdir}" />
       <depend srcdir="${srcdir}" destdir="${destdir}" />
       <javac srcdir="@{srcdir}" destdir="@{destdir}" debug="${compile.debug}">
-        <!--<compilerarg value="-Xlint:unchecked" />-->
-        <!--<compilearg value="-Xlint:deprecation" />-->
+        <!-- <compilerarg value="-Xlint:unchecked" /> -->
+        <!-- <compilearg value="-Xlint:deprecation" /> -->
       </javac>
     </sequential>
   </macrodef>

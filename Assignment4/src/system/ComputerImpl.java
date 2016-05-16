@@ -23,21 +23,22 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public ComputerImpl() throws RemoteException{}
 
-    public void Execute(Task task) throws RemoteException{
+    public Object Execute(Task task) throws RemoteException{
         numTasks++;
-        final long taskStartTime = System.nanoTime();
-        try{
-            // if(Runtime.getRuntime().availableProcessors() > 0)
-            //     new Thread(task).start();
-            task.run();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-        Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-            .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
-        return;
+        // final long taskStartTime = System.nanoTime();
+        // try{
+        //     // if(Runtime.getRuntime().availableProcessors() > 0)
+        //     //     new Thread(task).start();
+        //     task.execute();
+        // }
+        // catch(Exception e){
+        //     e.printStackTrace();
+        // }
+        // final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        // Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+        //     .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+        // return;
+        return task.execute();
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{

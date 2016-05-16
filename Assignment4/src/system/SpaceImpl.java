@@ -106,7 +106,16 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     Task t = null;
                     try{
                         t = SpaceImpl.this.takeReady();
-                        computer.Execute(t);
+                        Object o = computer.Execute(t);
+                        if(o != null){
+                            SpawnResult result = (SpawnResult)o;
+                            SpaceImpl.this.putWaiting(result.successor);
+                            for(int i = 0; i < result.subTasks.size(); i++){
+                                Continuation cont = Task.generateCont(i, result.successor);
+                                result.subTasks.get(i).setCont(cont);
+                                SpaceImpl.this.putReady(result.subTasks.get(i));
+                            }
+                        }
                     }
                     catch (RemoteException e){
                         try{
