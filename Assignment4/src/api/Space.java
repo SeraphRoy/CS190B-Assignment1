@@ -27,4 +27,8 @@ public interface Space extends Remote
     public Object getResult() throws RemoteException, InterruptedException;
 
     public void exit() throws RemoteException;
+
+    public void pushSpawnResult(SpawnResult result) throws RemoteException, InterruptedException;
+
+    public SpawnResult popSpawnResult() throws RemoteException, InterruptedException;
 }

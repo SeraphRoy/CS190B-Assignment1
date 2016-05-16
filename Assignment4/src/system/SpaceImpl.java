@@ -9,6 +9,8 @@ import java.rmi.registry.LocateRegistry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
+    protected final BlockingDeque<SpawnResult> spawnResultStack = new LinkedBlockingDeque<>();
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -44,6 +47,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             waitingClosure.remove(cont.getClosureId());
         }
     }
+
+    public void pushSpawnResult(SpawnResult result) throws RemoteException, InterruptedException{
+        spawnResultStack.putFirst(result);
+    }
+
+    public SpawnResult popSpawnResult() throws RemoteException, InterruptedException
+    {return spawnResultStack.takeFirst();}
 
     // task's argumentList is ready
     public void putReady(Task task) throws RemoteException, InterruptedException{
@@ -107,6 +117,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     try{
                         t = SpaceImpl.this.takeReady();
                         computer.Execute(t);
+                        if(SpaceImpl.this.spawnResultStack.size() != 0){
+                            SpawnResult result = SpaceImpl.this.popSpawnResult();
+                            SpaceImpl.this.putWaiting(result.successor);
+                            for(int i = 0; i < result.subTasks.size(); i++){
+                                Continuation cont = Task.generateCont(i, result.successor);
+                                result.subTasks.get(i).setCont(cont);
+                                SpaceImpl.this.putReady(result.subTasks.get(i));
+                            }
+                        }
                     }
                     catch (RemoteException e){
                         try{

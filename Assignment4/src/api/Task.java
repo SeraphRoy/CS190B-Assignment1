@@ -46,20 +46,24 @@ public abstract class Task implements Serializable, Runnable{
             }
             catch(Exception e){
                 System.err.println("ERROR IN SENDING ARGUMENT");
+                e.printStackTrace();
             }
         }
         else{
             try{
                 SpawnResult result  = spawn();
-                space.putWaiting(result.successor);
-                for(int i = 0; i < result.subTasks.size(); i++){
-                    Continuation cont = generateCont(i, result.successor);
-                    result.subTasks.get(i).cont = cont;
-                    space.putReady(result.subTasks.get(i));
-                }
+                space.pushSpawnResult(result);
+                // for(int i = 0; i < result.subTasks.size(); i++){
+                //     Continuation cont = generateCont(i, result.successor);
+                //     result.subTasks.get(i).cont = cont;
+                //     space.putReady(result.subTasks.get(i));
+                // }
             }
-            catch(Exception e){
-                System.err.println("ERROR IN PRODUCING SUBTASKS");
+            catch(RemoteException e){
+                e.printStackTrace();
+            }
+            catch(InterruptedException ex){
+                ex.printStackTrace();
             }
         }
     }
@@ -75,7 +79,7 @@ public abstract class Task implements Serializable, Runnable{
         return null;
     }
 
-    public Continuation generateCont(int slot, Task t){
+    public static Continuation generateCont(int slot, Task t){
         return new Continuation(t.id, slot);
     }
 
@@ -91,18 +95,10 @@ public abstract class Task implements Serializable, Runnable{
 
     public Continuation getCont(){return cont;}
 
+    public void setCont(Continuation cont){this.cont = cont;}
+
     public Space getSapce(){return space;}
 
     public int getArgc(){return argc;}
 
-    public class SpawnResult{
-        public Task successor;
-        // the tasks should be ordered according to the slot#
-        protected List<Task> subTasks;
-
-        public SpawnResult(Task successor, List<Task> subTasks){
-            this.successor = successor;
-            this.subTasks = subTasks;
-        }
-    }
 }
