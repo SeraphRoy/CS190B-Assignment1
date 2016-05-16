@@ -2,7 +2,10 @@ package system;
 import api.*;
 import java.util.List;
 
-public class SpawnResult{
+public class SpawnResult implements java.io.Serializable{
+
+    private static final long serialVersionUID = 227L;
+
     public Task successor;
     // the tasks should be ordered according to the slot#
     public List<Task> subTasks;

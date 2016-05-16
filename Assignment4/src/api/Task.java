@@ -48,22 +48,26 @@ public abstract class Task implements Serializable{
             }
             catch(Exception e){
                 System.err.println("ERROR IN SENDING ARGUMENT");
+                e.printStackTrace();
             }
             return null;
         }
         else{
             SpawnResult result = null;
             try{
-                result  = spawn();
-                // space.putWaiting(result.successor);
+                SpawnResult result  = spawn();
+                space.pushSpawnResult(result);
                 // for(int i = 0; i < result.subTasks.size(); i++){
                 //     Continuation cont = generateCont(i, result.successor);
                 //     result.subTasks.get(i).cont = cont;
                 //     space.putReady(result.subTasks.get(i));
                 // }
             }
-            catch(Exception e){
-                System.err.println("ERROR IN PRODUCING SUBTASKS");
+            catch(RemoteException e){
+                e.printStackTrace();
+            }
+            catch(InterruptedException ex){
+                ex.printStackTrace();
             }
             return result;
         }
