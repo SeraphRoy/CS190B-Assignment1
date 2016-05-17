@@ -24,12 +24,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private LinkedBlockingQueue<Object> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
     private HashSet<Long> doneTasks;
+    private BlockingQueue<SpawnResult> spawnResultQ;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<Object>();
         doneTasks = new HashSet<>();
+        spawnResultQ = new LinkedBlockingQueue<>();
     }
 
     // task's argumentList IS already initialized
@@ -66,6 +68,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public void putDoneTask(Task task) throws RemoteException, InterruptedException{
         doneTasks.add(task.id);
+    }
+
+    public void putSpawnResult(SpawnResult result) throws RemoteException, InterruptedException{
+        spawnResultQ.put(result);
+    }
+
+    public SpawnResult getSpawnResult() throws RemoteException, InterruptedException{
+        return spawnResultQ.take();
     }
 
     // task's argumentList IS empty
@@ -107,6 +117,29 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         }
     }
 
+    private class SpawnResultHandler implements Runnable{
+        public SpawnResultHandler(){}
+
+        public void run(){
+            while(true){
+                if(spawnResultQ.size() != 0){
+                    try{
+                        SpawnResult result = SpaceImpl.this.getSpawnResult();
+                        SpaceImpl.this.putWaiting(result.successor);
+                        for(int i = 0; i < result.subTasks.size(); i++){
+                            Continuation cont = Task.generateCont(i, result.successor);
+                            result.subTasks.get(i).setCont(cont);
+                            SpaceImpl.this.putReady(result.subTasks.get(i));
+                        }
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     private class ComputerProxy implements Runnable{
         private Computer computer;
 
@@ -119,6 +152,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         @Override
         public void run(){
             List<Task> taskList = new ArrayList<>();
+            new Thread(new SpawnResultHandler()).start();
             try{
                 while(true){
                     Task t = null;

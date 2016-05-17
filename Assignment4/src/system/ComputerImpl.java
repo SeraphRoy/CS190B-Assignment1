@@ -42,7 +42,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
                     Computer.tasksQ.wait();
                 }
 
-        }        catch(Exception e){
+        }
+        catch(Exception e){
             e.printStackTrace();
         }
         return;
