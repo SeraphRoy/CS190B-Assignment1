@@ -62,6 +62,12 @@ public abstract class Task implements Serializable, Runnable{
                 System.err.println("ERROR IN PRODUCING SUBTASKS");
             }
         }
+        try{
+            space.putDoneTask(this);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 

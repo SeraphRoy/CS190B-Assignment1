@@ -3,6 +3,7 @@ import api.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.ArrayList;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -14,6 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
@@ -21,11 +23,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
+    private HashSet<Long> doneTasks;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<Object>();
+        doneTasks = new HashSet<>();
     }
 
     // task's argumentList IS already initialized
@@ -49,6 +53,19 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     public void putReady(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task);
         readyClosure.put(closure);
+    }
+
+    public void putReady(List<Task> tasks) throws RemoteException, InterruptedException{
+        for(Task t : tasks){
+            if(!doneTasks.contains(t.id)){
+                Closure closure = new Closure(t.getArgc(), t);
+                readyClosure.put(closure);
+            }
+        }
+    }
+
+    public void putDoneTask(Task task) throws RemoteException, InterruptedException{
+        doneTasks.add(task.id);
     }
 
     // task's argumentList IS empty
@@ -101,16 +118,18 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         @Override
         public void run(){
+            List<Task> taskList = new ArrayList<>();
             try{
                 while(true){
                     Task t = null;
                     try{
                         t = SpaceImpl.this.takeReady();
+                        taskList.add(t);
                         computer.Execute(t);
                     }
                     catch (RemoteException e){
                         try{
-                            putReady(t);
+                            putReady(taskList);
                             //Computer.tasksQ.put(t);
                             computerProxies.remove(computer);
                         }

@@ -16,7 +16,11 @@ public interface Space extends Remote
 
     public void register( Computer computer ) throws RemoteException, InterruptedException;
 
+    public void putDoneTask(Task task) throws RemoteException, InterruptedException;
+
     public void putReady(Task task) throws RemoteException, InterruptedException;
+
+    public void putReady(List<Task> tasks) throws RemoteException, InterruptedException;
 
     public void putWaiting(Task task) throws RemoteException, InterruptedException;
 
