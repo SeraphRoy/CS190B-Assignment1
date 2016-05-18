@@ -24,10 +24,12 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public final int coreNum;
 
+    private BlockingQueue<Task> tasksQ = new LinkedBlockingQueue<>();
+
     public ComputerImpl() throws RemoteException{
         coreNum = Space.MULTICORE ? Runtime.getRuntime().availableProcessors() : 1;
         for(int i = 0; i < coreNum; i++){
-            new Thread(new Core(Computer.tasksQ)).start();
+            new Thread(new Core(tasksQ)).start();
         }
     }
 
@@ -36,12 +38,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         try{
             //task.run();
             //if(tasksQ.size() == 0)
-            Computer.tasksQ.put(task);
-            if(Computer.tasksQ.size() > 10)
-                synchronized(Computer.tasksQ){
-                    Computer.tasksQ.wait();
+            tasksQ.put(task);
+            if(tasksQ.size() > 10)
+                synchronized(tasksQ){
+                    tasksQ.wait();
                 }
-
         }
         catch(Exception e){
             e.printStackTrace();
@@ -54,7 +55,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         System.setSecurityManager( new SecurityManager() );
         final String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
         final Space space = (Space) Naming.lookup(url);
-        Computer computer = new ComputerImpl();
+        ComputerImpl computer = new ComputerImpl();
         try{
             space.register(computer);
         }

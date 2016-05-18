@@ -18,10 +18,13 @@ public class Core implements Runnable{
         while(true){
             try{
                 final long taskStartTime = System.nanoTime();
-                Task task = readyTasks.take();
+                Task task = null;
+                synchronized(readyTasks){
+                    task = readyTasks.take();
+                }
                 task.run();
-                synchronized (Computer.tasksQ){
-                    Computer.tasksQ.notify();
+                synchronized (readyTasks){
+                    readyTasks.notify();
                 }
                 final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
                 Logger.getLogger( ComputerImpl.class.getCanonicalName() )
