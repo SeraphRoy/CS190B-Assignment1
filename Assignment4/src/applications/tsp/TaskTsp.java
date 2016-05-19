@@ -122,7 +122,7 @@ public class TaskTsp extends Task{
     }
 
     @Override
-    public synchronized boolean needToCompute(){
+    public boolean needToCompute(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         return partialCityList.size() < 10;
     }

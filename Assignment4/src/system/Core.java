@@ -14,7 +14,7 @@ public class Core implements Runnable{
         this.readyTasks = readyTasks;
     }
 
-    public synchronized void run(){
+    public void run(){
         while(true){
             try{
                 final long taskStartTime = System.nanoTime();
