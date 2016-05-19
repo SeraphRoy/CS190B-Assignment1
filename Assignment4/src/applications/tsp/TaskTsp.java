@@ -60,7 +60,7 @@ public class TaskTsp extends Task{
     };
 
     static final public double[][] DISTANCES = initializeDistances();
-    public static List<Integer> shortestTour = new ArrayList<Integer>();
+    private List<Integer> shortestTour = new ArrayList<Integer>();
 
 
     //list[0] is a list of fixed cities
@@ -122,7 +122,7 @@ public class TaskTsp extends Task{
     }
 
     @Override
-    public boolean needToCompute(){
+    public synchronized boolean needToCompute(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         return partialCityList.size() < 10;
     }
@@ -220,25 +220,6 @@ public class TaskTsp extends Task{
             }
         return new JLabel( new ImageIcon( image ) );
     }
-
-    // public String toString()
-    // {
-    //     StringBuilder stringBuilder = new StringBuilder();
-    //     stringBuilder.append( getClass() );
-    //     stringBuilder.append( "\n\tCities: " );
-    //     // stringBuilder.append( 0 ).append( " " );
-    //     // stringBuilder.append( secondCity ).append( " " );
-    //     argumentList.get(0).getValue().stream().forEach(( city ) ->
-    //                                      {
-    //                                          stringBuilder.append( city ).append( " " );
-    //                                      } );
-
-    //     argumentList.get(1).getValue().stream().forEach(( city ) ->
-    //                                      {
-    //                                          stringBuilder.append( city ).append( " " );
-    //                                      } );
-    //     return stringBuilder.toString();
-    // }
 
     /**
      *

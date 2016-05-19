@@ -39,7 +39,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             //task.run();
             //if(tasksQ.size() == 0)
             tasksQ.put(task);
-            if(tasksQ.size() > 10)
+            if(tasksQ.size() > 20)
                 synchronized(tasksQ){
                     tasksQ.wait();
                 }
@@ -47,7 +47,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         catch(Exception e){
             e.printStackTrace();
         }
-        return;
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{

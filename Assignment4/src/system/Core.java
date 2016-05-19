@@ -14,14 +14,12 @@ public class Core implements Runnable{
         this.readyTasks = readyTasks;
     }
 
-    public void run(){
+    public synchronized void run(){
         while(true){
             try{
                 final long taskStartTime = System.nanoTime();
                 Task task = null;
-                synchronized(readyTasks){
-                    task = readyTasks.take();
-                }
+                task = readyTasks.take();
                 task.run();
                 synchronized (readyTasks){
                     readyTasks.notify();
