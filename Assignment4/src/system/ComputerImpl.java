@@ -31,7 +31,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer, Runna
 
     public ComputerImpl() throws RemoteException{
         System.out.println(SpaceImpl.MULTICORE + " " + SpaceImpl.preFetchNum);
-        coreNum = SpaceImpl.MULTICORE ? Runtime.getRuntime().availableProcessors() : 1;
+        coreNum = SpaceImpl.MULTICORE ? Runtime.getRuntime().availableProcessors()/2 - 1 : 1;
         for(int i = 0; i < coreNum; i++){
             new Thread(new Core(readyTasks)).start();
         }
