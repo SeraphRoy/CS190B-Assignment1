@@ -1,5 +1,6 @@
 package applications.tsp;
 import api.*;
+import system.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.net.MalformedURLException;
@@ -24,6 +25,8 @@ public class ClientTsp extends Client{
         list.add(argument0);
         list.add(argument1);
         Continuation cont = new Continuation(-1, 0);
+        SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);
+        SpaceImpl.preFetchNum = Integer.parseInt(args[1]);
         Task t = new TaskTsp(c.getSpace(), list, cont);
         c.setTask(t);
         c.run();

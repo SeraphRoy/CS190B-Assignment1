@@ -18,7 +18,6 @@ import javax.swing.JScrollPane;
 public class Client extends JFrame{
     final private Space space;
     private Task task;
-    final private long startTime = System.nanoTime();
 
     public Client(Task task, String title, String domainName) throws RemoteException, NotBoundException, MalformedURLException{
     System.setSecurityManager( new SecurityManager() );
@@ -42,12 +41,13 @@ public class Client extends JFrame{
     }
 
     public void run() throws RemoteException{
+        final long startTime = System.nanoTime();
         try{
             space.putReady(task);
             Object temp = space.getResult();
             //System.out.println("yosh " + temp);
             view(task.viewResult(temp));
-            space.exit();
+            //space.exit();
         }
         catch(InterruptedException e){
             e.printStackTrace();

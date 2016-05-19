@@ -32,8 +32,6 @@ public interface Space extends Remote
 
     public void exit() throws RemoteException;
 
-    public static boolean MULTICORE = true;
-
     public void putSpawnResult(SpawnResult result) throws RemoteException, InterruptedException;
 
     public SpawnResult getSpawnResult() throws RemoteException, InterruptedException;

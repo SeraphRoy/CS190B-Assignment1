@@ -19,12 +19,16 @@ import java.util.HashSet;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
-    private BlockingQueue<Closure> readyClosure;
+    protected BlockingQueue<Closure> readyClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
     private HashSet<Long> doneTasks;
     private BlockingQueue<SpawnResult> spawnResultQ;
+
+    public static boolean MULTICORE = true;
+
+    public static int preFetchNum = 8;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
@@ -32,6 +36,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         resultQueue = new LinkedBlockingQueue<Object>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
+        new Thread(new SpawnResultHandler()).start();
     }
 
     // task's argumentList IS already initialized
@@ -152,10 +157,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         @Override
         public void run(){
             List<Task> taskList = new ArrayList<>();
-            new Thread(new SpawnResultHandler()).start();
             try{
                 while(true){
                     Task t = null;
+                    long startTime = System.nanoTime();
                     try{
                         t = SpaceImpl.this.takeReady();
                         taskList.add(t);
@@ -173,6 +178,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }
+                    Logger.getLogger( this.getClass().getCanonicalName() )
+                        .log( Level.INFO, "Run time: {0} ms.", ( System.nanoTime() - startTime) / 1000000 );
+
                 }
             }
             catch (InterruptedException ignore) {}

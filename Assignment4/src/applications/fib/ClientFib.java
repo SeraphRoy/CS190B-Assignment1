@@ -1,6 +1,6 @@
 package applications.fib;
 import api.*;
-//import system.*;
+import system.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.net.MalformedURLException;
@@ -14,10 +14,12 @@ public class ClientFib extends Client{
 
     public static void main(String[] args) throws Exception{
         Client c = new ClientFib(null, "localhost");
-        Argument a = new Argument(16, 0);
+        Argument a = new Argument(20, 0);
         List<Argument> list = new ArrayList<>();
         list.add(a);
         Continuation cont = new Continuation(-1, 0);
+        SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);
+        SpaceImpl.preFetchNum = Integer.parseInt(args[1]);
         Task t = new TaskFib(c.getSpace(), list, cont);
         c.setTask(t);
         c.run();
