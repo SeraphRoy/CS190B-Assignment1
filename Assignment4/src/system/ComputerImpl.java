@@ -19,15 +19,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.lang.Runtime;
 
-public class ComputerImpl extends UnicastRemoteObject implements Computer, Runnable{
+public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public int numTasks = 0;
 
     public final int coreNum;
 
     private BlockingQueue<Task> tasksQ = new LinkedBlockingQueue<>();
-
-    private BlockingQueue<Task> readyTasks = new LinkedBlockingQueue<>();
 
     public ComputerImpl() throws RemoteException{
         System.out.println(SpaceImpl.MULTICORE + " " + SpaceImpl.preFetchNum);
@@ -36,19 +34,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer, Runna
             temp = 2;
         coreNum = SpaceImpl.MULTICORE ? temp : 1;
         for(int i = 0; i < coreNum; i++){
-            new Thread(new Core(readyTasks)).start();
-        }
-        new Thread(this).start();
-    }
-
-    public void run(){
-        while(true){
-            try{
-                readyTasks.put(tasksQ.take());
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
+            new Thread(new Core(tasksQ)).start();
         }
     }
 
