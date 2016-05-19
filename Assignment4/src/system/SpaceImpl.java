@@ -20,6 +20,7 @@ import java.util.HashSet;
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
     protected BlockingQueue<Closure> readyClosure;
+    protected BlockingQueue<Closure> spaceClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Object> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
@@ -32,11 +33,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
+        spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<Object>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
         new Thread(new SpawnResultHandler()).start();
+        new Thread(new SpaceTasksExecuter()).start();
     }
 
     // task's argumentList IS already initialized
@@ -51,7 +54,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         Argument argument = new Argument(result, cont.getSlot());
         closure.addArgument(argument);
         if(closure.getCounter() == 0){
-            readyClosure.put(closure);
+            spaceClosure.put(closure);
             waitingClosure.remove(cont.getClosureId());
         }
     }
@@ -119,6 +122,22 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         } catch (Exception e){
             System.err.println("Computer exception:");
             e.printStackTrace();
+        }
+    }
+
+    private class SpaceTasksExecuter implements Runnable{
+        public SpaceTasksExecuter(){}
+
+        public void run(){
+            while(true){
+                try{
+                    Task task = spaceClosure.take().getTask();
+                    task.run();
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
