@@ -45,6 +45,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             //if(tasksQ.size() == 0)
             tasksQ.put(task);
             if(tasksQ.size() > SpaceImpl.preFetchNum)
+            //if(tasksQ.size() > 30)
                 synchronized(tasksQ){
                     tasksQ.wait();
                 }
