@@ -30,6 +30,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer, Runna
     private BlockingQueue<Task> readyTasks = new LinkedBlockingQueue<>();
 
     public ComputerImpl() throws RemoteException{
+        System.out.println(SpaceImpl.MULTICORE + " " + SpaceImpl.preFetchNum);
         coreNum = SpaceImpl.MULTICORE ? Runtime.getRuntime().availableProcessors() : 1;
         for(int i = 0; i < coreNum; i++){
             new Thread(new Core(readyTasks)).start();
@@ -71,6 +72,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer, Runna
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{
+        SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);
+        SpaceImpl.preFetchNum = Integer.parseInt(args[1]);
         final String domainName = "localhost";
         System.setSecurityManager( new SecurityManager() );
         final String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;

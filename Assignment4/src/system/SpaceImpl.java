@@ -26,9 +26,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private HashSet<Long> doneTasks;
     private BlockingQueue<SpawnResult> spawnResultQ;
 
-    public static boolean MULTICORE = true;
+    public static boolean MULTICORE = false;
 
-    public static int preFetchNum = 8;
+    public static int preFetchNum = 1;
 
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();

@@ -18,8 +18,6 @@ public class ClientFib extends Client{
         List<Argument> list = new ArrayList<>();
         list.add(a);
         Continuation cont = new Continuation(-1, 0);
-        SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);
-        SpaceImpl.preFetchNum = Integer.parseInt(args[1]);
         Task t = new TaskFib(c.getSpace(), list, cont);
         c.setTask(t);
         c.run();
