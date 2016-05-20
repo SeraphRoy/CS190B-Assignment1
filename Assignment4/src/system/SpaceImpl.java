@@ -39,7 +39,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
         new Thread(new SpawnResultHandler()).start();
-        new Thread(new SpaceTasksExecuter()).start();
     }
 
     // task's argumentList IS already initialized
@@ -111,12 +110,17 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         //System.exit( 0 );
     }
 
+    public SpaceTasksExecuter createExecuter(int preFetchNum){
+        return new SpaceTasksExecuter(preFetchNum);
+    }
+
     public static void main(String[] args){
         if(System.getSecurityManager() == null)
             System.setSecurityManager(new SecurityManager());
         try{
             Registry registry = LocateRegistry.createRegistry(Space.PORT);
-            Space space = new SpaceImpl();
+            SpaceImpl space = new SpaceImpl();
+            new Thread(space.createExecuter(Integer.parseInt(args[1]))).start();
             registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
         } catch (Exception e){
@@ -125,14 +129,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         }
     }
 
-    private class SpaceTasksExecuter implements Runnable{
-        public SpaceTasksExecuter(){}
+    public class SpaceTasksExecuter implements Runnable{
+        private boolean turnedOn;
+
+        public SpaceTasksExecuter(int preFetchNum){
+            turnedOn = preFetchNum > 1;
+        }
 
         public void run(){
             while(true){
                 try{
                     Task task = spaceClosure.take().getTask();
-                    task.run();
+                    if(turnedOn)
+                        task.run();
+                    else{
+                        Closure closure = new Closure(task.getArgc(), task);
+                        readyClosure.put(closure);
+                    }
                 }
                 catch(InterruptedException e){
                     e.printStackTrace();

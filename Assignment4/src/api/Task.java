@@ -12,7 +12,7 @@ import javax.swing.JLabel;
  * The client should override spawn(), spawnNext(), generateArgument(), and needToCompute() for general tasks,
  * and only the last two for compose tasks.
  */
-public abstract class Task implements Serializable, Runnable{
+public abstract class Task implements Serializable{
 
     final protected Space space;
 
@@ -38,11 +38,14 @@ public abstract class Task implements Serializable, Runnable{
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
     }
 
-    public void run(){
+    public ResultWrapper run(){
+        ResultWrapper result = null;
         if(needToCompute()){
             Object o = generateArgument();
             try{
-                space.sendArgument(cont, o);
+                //space.sendArgument(cont, o);
+                result = new ResultWrapper(1, cont, o, space, this);
+                return result;
             }
             catch(Exception e){
                 System.err.println("ERROR IN SENDING ARGUMENT");
@@ -51,26 +54,24 @@ public abstract class Task implements Serializable, Runnable{
         }
         else{
             try{
-                SpawnResult result  = spawn();
-                // space.putWaiting(result.successor);
-                // for(int i = 0; i < result.subTasks.size(); i++){
-                //     Continuation cont = generateCont(i, result.successor);
-                //     result.subTasks.get(i).cont = cont;
-                //     space.putReady(result.subTasks.get(i));
-                // }
-                space.putSpawnResult(result);
+                SpawnResult spawnResult  = spawn();
+
+                //space.putSpawnResult(result);
+                result = new ResultWrapper(2, spawnResult, space, this);
+                return result;
             }
             catch(Exception e){
                 e.printStackTrace();
                 System.err.println("ERROR IN PRODUCING SUBTASKS");
             }
         }
-        try{
-            space.putDoneTask(this);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        // try{
+        //     space.putDoneTask(this);
+        // }
+        // catch(Exception e){
+        //     e.printStackTrace();
+        // }
+        return result;
     }
 
 
