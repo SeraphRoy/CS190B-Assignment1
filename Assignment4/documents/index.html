@@ -1,17 +1,15 @@
 <html>
 
   <body>
-    <h1>CS 190B: JAVA-CENTRIC CLUSTER & CONCURRENT COMPUTING (HW03)</h1>
-    <p>The following is the time taken for each task, and the graph for efficiency.</p>
-    <img src="Graph.png" />
-    <img src="Table.png" />
-    <p>The following is the class structure of the whole system, indicated by the file structures.</p>
-    <img src="FileStructure.png" />    
-    <img src="Picture.jpg" align="right"/>
-    <p>Design issues: 1. What functions does the client need to implement in order to get the system work? 2. How the tasks are handled throughout the whole procedure? 3. How fault tolerance is achieved?</p>
-    <p>1. The client needs to have three(maybe two is fine) classes in order to get it work: implement the tasks that will spawn other tasks, the tasks that will compose, and a client with main in it. More specifically, the tasks that will spawn need to implement four methods from the Task abstract class: spawn(), spawnNext(), generateArgument(), and needToCompute(). The call() method is already been implemented and will work correctly if you implement the above methods right. The task that composes only need to implement generateArgument().</p>
-    <p>2. The client sends an initial task to the space. The space has containers for ready tasks and waiting tasks. There is a wrapper on top of the task called closure used to deal with the waiting tasks cases. Computers will take tasks from the ready container; the space will help unwrap the closure back to task and give it to the computers. When a result is sent to space, the space will find which waiting task is waiting for this result. The space will get the task(closure) that is waiting from the container(map), and add the result to the corresponding argument. If the task is ready to go, the space will just put it in the ready queue and remove it from the map.</p>
-    <p>3. Basically if the computer proxy inside the space gets a remote exception when it executes the task, it will just put the task back to the ready queue.</p>
+    <h1>CS 190B: JAVA-CENTRIC CLUSTER & CONCURRENT COMPUTING (HW04)</h1>
+    <p>The following is the graph for efficiency.</p>
+    <img src="Graph1.png" />
+    <img src="Graph2.png" />
+    <p>For the C=1 case, those two techniques seem to have a pretty good boost on the performance, yet for the C=8 case, it doesn't do much help</p>
+    <p>The main design issues I have is about the Computer. Previously each computer has only one task and after it computes it, it returns to the space. That should be changed in order to improve the efficiency of the computers.</p>
+    <p>Therefore, I change the design that when the computer executes a task, it doesn't really run the task but rather put the task on a queue inside the computer. When the computer is connected to the space, there are several threads running on the computer, each of which tries to grab a task from the queue of the computer and execute it. As such, task prefetching and multi-core can be implements and thus the efficiency can be improved. I can control how many tasks are stored on the computer and how many threads I can create. When the number of tasks in the queue go beyong the limit, the computer will just stop putting tasks in the queue</p>
+    <p>Moreover, to also improve performance, I implement space execute tasks. Basically I assume that the composing tasks take not much effort compared with other tasks, and thus they can be computed on the space. Whenever a waiting task is ready, which has to be a composing task, a separate thread on the computer will take that and execute it, which will save a lot of rmi calls.</p>
+    <p>In terms of fault tolerance, a list of retrieved tasks is kept by the computer proxy. Whenever the task is finished, the space will be notified that the task is done. When a computer is down, the proxy will find which of the tasks it has doesn't have a result yet, and it will put that tasks back to the space.</p>
   </body>
 
   
