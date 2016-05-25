@@ -34,34 +34,11 @@ public class TaskTsp extends Task{
         { 6, 3 },
         { 6, 6 },
         { 3, 6 }
-
-        // { 6, 3 },
-        // { 2, 2 },
-        // { 5, 8 },
-        // { 1, 5 },
-        // { 1, 6 },
-        // { 2, 7 },
-        // { 2, 8 },
-        // { 6, 5 },
-        // { 1, 3 },
-        // { 6, 6 }
-
-        // { 0, 0 },
-        // { 1, 1 },
-        // { 2, 0 },
-        // { 3, 1 },
-        // { 4, 0 },
-        // { 5, 1 },
-        // { 6, 0 },
-        // { 7, 1 },
-        // { 8, 0 },
-        // { 9, 1 },
-        // { 10, 0 }
     };
 
     static final public double[][] DISTANCES = initializeDistances();
     private List<Integer> shortestTour = new ArrayList<Integer>();
-
+    private Share share;
 
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
@@ -127,6 +104,14 @@ public class TaskTsp extends Task{
         return partialCityList.size() < 10;
     }
 
+    @Override
+    public boolean needToProceed(){
+        Share lowerBound = new Share(getLowerBound());
+        if(lowerBound.isBetterThan(this.computer.getShare()))
+            return false;
+        return true;
+    }
+
     private void iterate( List<Integer> permutation, int k, List<List<Integer>> allPermute)
     {
         for( int i = k; i < permutation.size(); i++ )
@@ -141,6 +126,9 @@ public class TaskTsp extends Task{
             }
     }
 
+    private int getLowerBound(){
+        
+    }
 
     private List<Integer> addPrefix( List<Integer> partialTour )
     {

@@ -16,6 +16,8 @@ public abstract class Task implements Serializable{
 
     final protected Space space;
 
+    public Computer computer;
+
     final protected List<Argument> argumentList;
 
     protected Continuation cont;
@@ -24,11 +26,12 @@ public abstract class Task implements Serializable{
 
     public long id;
 
-    public Task(Space space, List<Argument> list, Continuation cont){
+    public Task(Space space, List<Argument> list, Continuation cont, Computer computer){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
+        this.computer = computer;
     }
 
     public Task(Space space, List<Argument> list){
@@ -36,41 +39,35 @@ public abstract class Task implements Serializable{
         this.argumentList = list;
         this.cont = null;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
+        this.computer = null;
     }
 
-    public ResultWrapper run(){
+    public ResultWrapper execute(){
         ResultWrapper result = null;
-        if(needToCompute()){
-            Object o = generateArgument();
-            try{
-                //space.sendArgument(cont, o);
-                result = new ResultWrapper(1, cont, o, space, this);
-                return result;
+        if(needToProceed()){
+            if(needToCompute()){
+                Object o = generateArgument();
+                try{
+                    result = new ResultWrapper(1, cont, o, space, this);
+                    return result;
+                }
+                catch(Exception e){
+                    System.err.println("ERROR IN SENDING ARGUMENT");
+                    e.printStackTrace();
+                }
             }
-            catch(Exception e){
-                System.err.println("ERROR IN SENDING ARGUMENT");
-                e.printStackTrace();
+            else{
+                try{
+                    SpawnResult spawnResult  = spawn();
+                    result = new ResultWrapper(2, spawnResult, space, this);
+                    return result;
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    System.err.println("ERROR IN PRODUCING SUBTASKS");
+                }
             }
         }
-        else{
-            try{
-                SpawnResult spawnResult  = spawn();
-
-                //space.putSpawnResult(result);
-                result = new ResultWrapper(2, spawnResult, space, this);
-                return result;
-            }
-            catch(Exception e){
-                e.printStackTrace();
-                System.err.println("ERROR IN PRODUCING SUBTASKS");
-            }
-        }
-        // try{
-        //     space.putDoneTask(this);
-        // }
-        // catch(Exception e){
-        //     e.printStackTrace();
-        // }
         return result;
     }
 
@@ -94,6 +91,12 @@ public abstract class Task implements Serializable{
     //default is true for compose tasks
     //normal tasks NEED override this
     public boolean needToCompute(){
+        return true;
+    }
+
+    //default is true for compose tasks
+    //normal tasks NEED override this
+    public boolean needToProceed(){
         return true;
     }
 

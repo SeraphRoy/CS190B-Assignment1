@@ -31,6 +31,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public static int preFetchNum = 1;
 
+    private Share share = null;
+
     public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
         spaceClosure = new LinkedBlockingQueue<Closure>();
@@ -92,6 +94,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public void register(Computer computer) throws RemoteException, InterruptedException{
+        computer.setShare(new Share(this.share.getValue()));
         ComputerProxy c = new ComputerProxy(computer);
         computerProxies.put( computer, c);
         new Thread(c).start();
@@ -103,6 +106,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public Object getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
+
+    public synchronized void updateShare(Share share) throws RemoteException{
+        this.share = share.getBetterOne(this.share);
+    }
 
     @Override
     public void exit() throws RemoteException{

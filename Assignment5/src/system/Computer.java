@@ -14,4 +14,9 @@ public interface Computer extends Remote{
     public void Execute(List<Task> tasks) throws RemoteException;
 
     public void exit() throws RemoteException;
-}
+
+    public synchronized Share getShare();
+
+    public synchronized void updateShare(Share share);
+
+    public synchronized void setShare(Share share);

@@ -25,7 +25,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public final int coreNum;
 
+    private Share share;
+
     private BlockingQueue<Task> tasksQ = new LinkedBlockingQueue<>();
+
+    private Share share = null;
 
     public ComputerImpl() throws RemoteException{
         System.out.println(SpaceImpl.MULTICORE + " " + SpaceImpl.preFetchNum);
@@ -60,6 +64,12 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             Execute(t);
         }
     }
+
+    public synchronized Share getShare(){return share;}
+
+    public synchronized void updateShare(Share share){this.share = share.getBetterOne(this.share);}
+
+    public synchronized void setShare(Share share){this.share = share;}
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{
         SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);

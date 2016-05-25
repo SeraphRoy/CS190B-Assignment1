@@ -36,4 +36,6 @@ public interface Space extends Remote
 
     public SpawnResult getSpawnResult() throws RemoteException, InterruptedException;
 
+    public synchronized void updateShare(Share share) throws RemoteException;
+
 }

@@ -13,8 +13,11 @@ public class Core implements Runnable{
 
     private BlockingQueue<ResultWrapper> resultQ;
 
-    public Core(BlockingQueue<Task> readyTasks){
+    private Computer computer;
+
+    public Core(BlockingQueue<Task> readyTasks, Computer computer){
         this.readyTasks = readyTasks;
+        this.computer = computer;
         resultQ = new LinkedBlockingQueue<>();
     }
 
@@ -25,8 +28,10 @@ public class Core implements Runnable{
                 final long taskStartTime = System.nanoTime();
                 Task task = null;
                 task = readyTasks.take();
-                ResultWrapper result = task.run();
-                resultQ.put(result);
+                task.computer = this.computer;
+                ResultWrapper result = task.execute();
+                if(result != null)
+                    resultQ.put(result);
                 synchronized (readyTasks){
                     readyTasks.notify();
                 }
