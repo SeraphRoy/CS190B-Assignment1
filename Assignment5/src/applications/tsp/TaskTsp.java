@@ -113,9 +113,14 @@ public class TaskTsp extends Task{
     @Override
     public boolean needToProceed(){
         Share lowerBound = new Share(getLowerBound());
-        if(lowerBound.isBetterThan(this.computer.getShare()))
-            return false;
-        return true;
+        try{
+            if(lowerBound.isBetterThan(this.computer.getShare()))
+                return true;
+        }
+        catch(RemoteException e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private void iterate( List<Integer> permutation, int k, List<List<Integer>> allPermute)

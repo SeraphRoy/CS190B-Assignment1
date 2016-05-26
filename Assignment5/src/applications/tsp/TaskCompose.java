@@ -29,4 +29,9 @@ public class TaskCompose extends Task{
          return tour;
      }
 
+    @Override
+    public Comparable generateShareValue(Object o){
+        double distance = TaskTsp.tourDistance((List<Integer>)o);
+        return distance;
+    }
 }
