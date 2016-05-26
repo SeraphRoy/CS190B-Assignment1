@@ -56,6 +56,7 @@ public class TaskTsp extends Task{
     public SpawnResult spawn() throws RemoteException, InterruptedException{
         List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
         Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
+        t.computer = this.computer;
         List<Task> list = new ArrayList<>();
         for(int i : (List<Integer>)argumentList.get(1).getValue()){
             List<Integer> fixedList = new ArrayList<>();
@@ -73,7 +74,9 @@ public class TaskTsp extends Task{
             List<Argument> newList = new ArrayList<>();
             newList.add(argument0);
             newList.add(argument1);
-            list.add(new TaskTsp(space, newList));
+            Task subTask = new TaskTsp(space, newList);
+            subTask.computer = this.computer;
+            list.add(subTask);
         }
         return new SpawnResult(t, list);
     }

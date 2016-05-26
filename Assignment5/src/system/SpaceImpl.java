@@ -207,9 +207,21 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     Task task = spaceClosure.take().getTask();
                     if(turnedOn){
                         ResultWrapper result = task.execute();
-                        if(result.type == 1){
+                        if(result.type == 0){
                             try{
-                                result.space.sendArgument(result.cont, result.result);
+                                sendArgument(result.cont);
+                            }
+                            catch(RemoteException | InterruptedException e){
+                                System.err.println("error from result type0");
+                                e.printStackTrace();
+                            }
+                        }
+                        else if(result.type == 1){
+                            try{
+                                if(!result.needToUpdate)
+                                    sendArgument(result.cont, result.result);
+                                else
+                                    sendArgument(result.cont, result.result, new Share(result.task.generateShareValue(result.result)));
                             }
                             catch(RemoteException | InterruptedException e){
                                 System.err.println("Error in sending arguments");
