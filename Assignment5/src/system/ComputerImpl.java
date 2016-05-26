@@ -63,13 +63,15 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         }
     }
 
-    public synchronized Share getShare(){return share;}
+    public synchronized Share getShare() throws RemoteException{return share;}
 
-    public synchronized void updateShare(Share share){
+    public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
     }
 
-    public synchronized void setShare(Share share){this.share = share;}
+    public synchronized void setShare(Share share) throws RemoteException{
+        this.share = share;
+    }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{
         SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);

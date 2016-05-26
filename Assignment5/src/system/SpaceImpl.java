@@ -128,7 +128,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
-        computerProxies.keySet().forEach(computer -> computer.updateShare(share));
+        computerProxies.keySet().forEach(computer -> {
+                try{
+                    computer.updateShare(share);
+                }
+                catch(RemoteException e){
+                    e.printStackTrace();
+                }
+            });
     }
 
     @Override
@@ -146,7 +153,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             System.setSecurityManager(new SecurityManager());
         try{
             Registry registry = LocateRegistry.createRegistry(Space.PORT);
-            Share share = new Share(0x7fffffff);
+            Share share = new Share(Double.MAX_VALUE);
             SpaceImpl space = new SpaceImpl(share);
             new Thread(space.createExecuter(Integer.parseInt(args[1]))).start();
             registry.rebind(Space.SERVICE_NAME, space);

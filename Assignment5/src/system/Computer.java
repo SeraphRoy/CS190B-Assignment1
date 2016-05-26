@@ -15,9 +15,9 @@ public interface Computer extends Remote{
 
     public void exit() throws RemoteException;
 
-    public Share getShare();
+    public Share getShare() throws RemoteException;
 
-    public void updateShare(Share share);
+    public void updateShare(Share share) throws RemoteException;
 
-    public void setShare(Share share);
+    public void setShare(Share share) throws RemoteException;
 }
