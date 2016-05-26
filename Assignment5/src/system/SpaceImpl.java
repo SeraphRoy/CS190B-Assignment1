@@ -312,8 +312,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         System.out.println("Computer #" + computerId + " is dead!!!");
                         return;
                     }
-                    Logger.getLogger( this.getClass().getCanonicalName() )
-                        .log( Level.INFO, "Run time: {0} ms.", ( System.nanoTime() - startTime) / 1000000 );
+                    // Logger.getLogger( this.getClass().getCanonicalName() )
+                    //     .log( Level.INFO, "Run time: {0} ms.", ( System.nanoTime() - startTime) / 1000000 );
 
                 }
             }
