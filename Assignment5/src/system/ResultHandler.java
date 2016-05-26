@@ -21,9 +21,21 @@ public class ResultHandler implements Runnable{
             catch(InterruptedException e){
                 e.printStackTrace();
             }
-            if(result.type == 1){
+            if(result.type == 0){
                 try{
-                    result.space.sendArgument(result.cont, result.result);
+                    result.space.sendArgument(result.cont);
+                }
+                catch(RemoteException | InterruptedException e){
+                    System.err.println("error from result type0");
+                    e.printStackTrace();
+                }
+            }
+            else if(result.type == 1){
+                try{
+                    if(!result.needToUpdate)
+                        result.space.sendArgument(result.cont, result.result);
+                    else
+                        result.space.sendArgument(result.cont, result.result, result.task.computer.getShare());
                 }
                 catch(RemoteException | InterruptedException e){
                     System.err.println("Error in sending arguments");

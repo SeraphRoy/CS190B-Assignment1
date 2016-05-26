@@ -99,6 +99,12 @@ public class TaskTsp extends Task{
     }
 
     @Override
+    public Comparable generateShareValue(Object o){
+        double distance = tourDistance((List<Integer>)o);
+        return distance;
+    }
+
+    @Override
     public boolean needToCompute(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         return partialCityList.size() < 10;
@@ -126,8 +132,15 @@ public class TaskTsp extends Task{
             }
     }
 
-    private int getLowerBound(){
-        
+    private double getLowerBound(){
+        // partial tour for now
+        List<Integer> tour = (List<Integer>)argumentList.get(0).getValue();
+        double cost = 0;
+        for ( int city = 0; city < tour.size() - 1; city ++ )
+            {
+                cost += DISTANCES[ tour.get( city ) ][ tour.get( city + 1 ) ];
+            }
+        return cost;
     }
 
     private List<Integer> addPrefix( List<Integer> partialTour )

@@ -26,6 +26,10 @@ public interface Space extends Remote
 
     public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException;
 
+    public void sendArgument(Continuation cont, Object result, Share share) throws RemoteException, InterruptedException;
+
+    public void sendArgument(Continuation cont) throws RemoteException, InterruptedException;
+
     public Task takeReady() throws RemoteException, InterruptedException;
 
     public Object getResult() throws RemoteException, InterruptedException;
@@ -36,6 +40,6 @@ public interface Space extends Remote
 
     public SpawnResult getSpawnResult() throws RemoteException, InterruptedException;
 
-    public synchronized void updateShare(Share share) throws RemoteException;
+    public void updateShare(Share share) throws RemoteException;
 
 }

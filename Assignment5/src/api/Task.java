@@ -26,12 +26,12 @@ public abstract class Task implements Serializable{
 
     public long id;
 
-    public Task(Space space, List<Argument> list, Continuation cont, Computer computer){
+    public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
-        this.computer = computer;
+        this.computer = null;
     }
 
     public Task(Space space, List<Argument> list){
@@ -49,6 +49,12 @@ public abstract class Task implements Serializable{
                 Object o = generateArgument();
                 try{
                     result = new ResultWrapper(1, cont, o, space, this);
+                    Comparable comp = generateShareValue(o);
+                    Share newShare = new Share(comp);
+                    if(newShare.isBetterThan(computer.getShare())){
+                        result.needToUpdate = true;
+                        computer.updateShare(newShare);
+                    }
                     return result;
                 }
                 catch(Exception e){
@@ -68,9 +74,11 @@ public abstract class Task implements Serializable{
                 }
             }
         }
+        result = new ResultWrapper(0, cont, null, space, this);
         return result;
     }
 
+    public abstract Comparable generateShareValue(Object o);
 
     public JLabel viewResult(Object result){
         System.err.println("You shouldn't reach this point");

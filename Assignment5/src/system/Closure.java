@@ -31,4 +31,8 @@ public class Closure implements java.io.Serializable{
         argumentList.add(a);
         counter --;
     }
+
+    public synchronized void decrementCounter(){
+        counter --;
+    }
 }

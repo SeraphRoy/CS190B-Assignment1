@@ -15,6 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.HashSet;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
@@ -26,20 +27,23 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
     private HashSet<Long> doneTasks;
     private BlockingQueue<SpawnResult> spawnResultQ;
-
+    private ShareHandler shareHandler;
     public static boolean MULTICORE = false;
 
     public static int preFetchNum = 1;
 
     private Share share = null;
 
-    public SpaceImpl() throws RemoteException{
+    public SpaceImpl(Share share) throws RemoteException{
         readyClosure = new LinkedBlockingQueue<Closure>();
         spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<Object>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
+        this.share = share;
+        shareHandler = new ShareHandler(share);
+        new Thread(shareHandler).start();
         new Thread(new SpawnResultHandler()).start();
     }
 
@@ -54,6 +58,21 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         Argument argument = new Argument(result, cont.getSlot());
         closure.addArgument(argument);
+        if(closure.getCounter() == 0){
+            spaceClosure.put(closure);
+            waitingClosure.remove(cont.getClosureId());
+        }
+    }
+
+    public void sendArgument(Continuation cont, Object result, Share share) throws RemoteException, InterruptedException{
+        sendArgument(cont, result);
+        shareHandler.updateShare(share);
+    }
+
+    // is called when task needn't compute
+    public void sendArgument(Continuation cont) throws RemoteException, InterruptedException{
+        Closure closure = waitingClosure.get(cont.getClosureId());
+        closure.decrementCounter();
         if(closure.getCounter() == 0){
             spaceClosure.put(closure);
             waitingClosure.remove(cont.getClosureId());
@@ -109,6 +128,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
+        computerProxies.keySet().forEach(computer -> computer.updateShare(share));
     }
 
     @Override
@@ -126,13 +146,44 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             System.setSecurityManager(new SecurityManager());
         try{
             Registry registry = LocateRegistry.createRegistry(Space.PORT);
-            SpaceImpl space = new SpaceImpl();
+            Share share = new Share(0x7fffffff);
+            SpaceImpl space = new SpaceImpl(share);
             new Thread(space.createExecuter(Integer.parseInt(args[1]))).start();
             registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
         } catch (Exception e){
             System.err.println("Computer exception:");
             e.printStackTrace();
+        }
+    }
+
+    public class ShareHandler implements Runnable{
+        private Share share;
+        private AtomicBoolean needToUpdate = new AtomicBoolean(false);
+
+        public ShareHandler(Share share){
+            this.share = share;
+        }
+
+        public synchronized void updateShare(Share share){
+            this.share = share;
+            needToUpdate.set(true);
+        }
+
+        public void run(){
+            while(true){
+                if(needToUpdate.get()){
+                    if(share.isBetterThan(SpaceImpl.this.share)){
+                        try{
+                            SpaceImpl.this.updateShare(share);
+                        }
+                        catch(RemoteException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    needToUpdate.set(false);
+                }
+            }
         }
     }
 
@@ -148,7 +199,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                 try{
                     Task task = spaceClosure.take().getTask();
                     if(turnedOn){
-                        ResultWrapper result = task.run();
+                        ResultWrapper result = task.execute();
                         if(result.type == 1){
                             try{
                                 result.space.sendArgument(result.cont, result.result);
@@ -250,7 +301,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             catch (InterruptedException ignore) {}
         }
 
-        public void exit() { try { computer.exit(); } catch ( RemoteException ignore ) {} }
-
+        public void exit() {
+            try { computer.exit(); } catch ( RemoteException ignore ) {}
+        }
     }
 }
+

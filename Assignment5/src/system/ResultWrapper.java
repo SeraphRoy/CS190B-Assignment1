@@ -15,6 +15,8 @@ public class ResultWrapper{
 
     public Task task = null;
 
+    public boolean needToUpdate = false;
+
     public ResultWrapper(int type, SpawnResult spawnResult, Space space, Task task){
         this.type = type;
         this.spawnResult = spawnResult;

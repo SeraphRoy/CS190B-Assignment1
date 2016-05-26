@@ -25,8 +25,6 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public final int coreNum;
 
-    private Share share;
-
     private BlockingQueue<Task> tasksQ = new LinkedBlockingQueue<>();
 
     private Share share = null;
@@ -38,7 +36,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             temp = 2;
         coreNum = SpaceImpl.MULTICORE ? temp : 1;
         for(int i = 0; i < coreNum; i++){
-            new Thread(new Core(tasksQ)).start();
+            new Thread(new Core(tasksQ, this)).start();
         }
     }
 
@@ -67,7 +65,9 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public synchronized Share getShare(){return share;}
 
-    public synchronized void updateShare(Share share){this.share = share.getBetterOne(this.share);}
+    public synchronized void updateShare(Share share){
+        this.share = share.getBetterOne(this.share);
+    }
 
     public synchronized void setShare(Share share){this.share = share;}
 

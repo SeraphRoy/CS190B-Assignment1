@@ -10,19 +10,19 @@ public class Share implements Serializable{
         this.value = value;
     }
 
-    public synchronized Comparable getValue(){return value;}
+    public Comparable getValue(){return value;}
 
-    public synchronized void setValue(Comparable value){
+    public void setValue(Comparable value){
         this.value = value;
     }
 
-    public synchronized Share getBetterOne(Share that){
+    public Share getBetterOne(Share that){
         if(this.getValue().compareTo(that.getValue()) > 0)
             return that;
         return this;
     }
 
-    public synchronized boolean isBetterThan(Share that){
+    public boolean isBetterThan(Share that){
         if(this.getValue().compareTo(that.getValue()) < 0)
             return true;
         return false;
