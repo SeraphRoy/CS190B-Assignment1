@@ -26,6 +26,11 @@ public class TaskCompose extends Task{
                  tour = new ArrayList<>(path);
              }
          }
+         if(tour.size() == 0){
+             for(int i = 0; i < TaskTsp.CITIES.length; i++){
+                 tour.add(i);
+             }
+         }
          return tour;
      }
 
