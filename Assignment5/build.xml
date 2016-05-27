@@ -70,17 +70,6 @@
     </java>
   </target>
 
-  <target name="runClientFib" depends="jar" description="run fib">
-    <java classname="applications.fib.ClientFib" fork="true">
-      <jvmarg value="-Djava.security.policy=policy"/>
-      <arg value="${arg0}" />
-      <arg value="${arg1}" />
-      <classpath>
-        <pathelement location="dist/all.jar"/>
-      </classpath>
-    </java>
-  </target>    
-
   <target name="runClientTsp" depends="jar" description="run tsp">
     <java classname="applications.tsp.ClientTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>

@@ -34,6 +34,23 @@ public class TaskTsp extends Task{
         { 6, 3 },
         { 6, 6 },
         { 3, 6 }
+
+        // { 1, 1 },
+        // { 8, 1 },
+        // { 8, 8 },
+        // { 1, 8 },
+        // { 2, 2 },
+        // { 7, 2 },
+        // { 7, 7 },
+        // { 2, 7 },
+        // { 3, 3 },
+        // { 6, 3 },
+        // { 6, 6 },
+        // { 3, 6 },
+        // { 4, 4 },
+        // { 5, 4 },
+        // { 5, 5 },
+        // { 4, 5 }
     };
 
     static final public double[][] DISTANCES = initializeDistances();
@@ -111,7 +128,7 @@ public class TaskTsp extends Task{
     @Override
     public boolean needToCompute(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
-        return partialCityList.size() < 7;
+        return partialCityList.size() < 10;
     }
 
     @Override
