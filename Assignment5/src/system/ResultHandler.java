@@ -2,6 +2,7 @@ package system;
 
 import api.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.rmi.RemoteException;
 
 public class ResultHandler implements Runnable{
@@ -15,8 +16,13 @@ public class ResultHandler implements Runnable{
     public void run(){
         while(true){
             if(resultQ.size() != 0){
+                BlockingQueue<ResultWrapper> temp = null;
+                synchronized(resultQ){
+                    temp = resultQ;
+                    resultQ = new LinkedBlockingQueue<>();
+                }
                 try{
-                    resultQ.peek().space.putComputerResults(resultQ);
+                    temp.peek().space.putComputerResults(temp);
                 }
                 catch(RemoteException | InterruptedException e){
                     e.printStackTrace();

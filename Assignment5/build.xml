@@ -8,7 +8,7 @@
   <property name="compile.debug" value="true" />
   <property name="dist" location="dist" />
   <property name="arg0" value="true" />
-  <property name="arg1" value="5" />
+  <property name="arg1" value="20" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
