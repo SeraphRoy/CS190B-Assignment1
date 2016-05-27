@@ -26,9 +26,16 @@ public class ClientTsp extends Client{
         list.add(argument1);
         Continuation cont = new Continuation(-1, 0);
         Task t = new TaskTsp(c.getSpace(), list, cont);
-        t.share = new Share(Double.MAX_VALUE);
+        t.share = new Share(calculateUpperBound());
         c.setTask(t);
         c.run();
     }
 
+    static public double calculateUpperBound(){
+        List<Integer> tour = new ArrayList<>();
+        for(int i = 0; i < TaskTsp.CITIES.length; i++){
+            tour.add(i);
+        }
+        return TaskTsp.tourDistance(tour);
+    }
 }
