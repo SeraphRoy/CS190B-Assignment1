@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="CS190B HW4" default="compile">
+<project name="CS190B HW5" default="compile">
 
   <property environment="env"/> <!-- load the environment variables -->
   <property name="build" location="bin" />
@@ -7,8 +7,8 @@
   <property name="javadoc" location="documents/javadoc" />
   <property name="compile.debug" value="true" />
   <property name="dist" location="dist" />
-  <property name="arg0" value="false" />
-  <property name="arg1" value="2" />
+  <property name="arg0" value="true" />
+  <property name="arg1" value="5" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />

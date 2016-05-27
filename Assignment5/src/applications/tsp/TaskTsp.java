@@ -38,7 +38,6 @@ public class TaskTsp extends Task{
 
     static final public double[][] DISTANCES = initializeDistances();
     private List<Integer> shortestTour = new ArrayList<Integer>();
-    private Share share;
 
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
@@ -57,6 +56,7 @@ public class TaskTsp extends Task{
         List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
         Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
         t.computer = this.computer;
+        t.share = new Share(this.computer.getShare().getValue());
         List<Task> list = new ArrayList<>();
         for(int i : (List<Integer>)argumentList.get(1).getValue()){
             List<Integer> fixedList = new ArrayList<>();
@@ -76,6 +76,7 @@ public class TaskTsp extends Task{
             newList.add(argument1);
             Task subTask = new TaskTsp(space, newList);
             subTask.computer = this.computer;
+            subTask.share = new Share(this.computer.getShare().getValue());
             list.add(subTask);
         }
         return new SpawnResult(t, list);
@@ -116,13 +117,8 @@ public class TaskTsp extends Task{
     @Override
     public boolean needToProceed(){
         Share lowerBound = new Share(getLowerBound());
-        try{
-            if(lowerBound.isBetterThan(this.computer.getShare()))
-                return true;
-        }
-        catch(RemoteException e){
-            e.printStackTrace();
-        }
+        if(lowerBound.isBetterThan(this.share))
+            return true;
         return false;
     }
 

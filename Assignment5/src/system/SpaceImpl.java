@@ -128,6 +128,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
+        System.out.println("The space share is: " + share.getValue());
         computerProxies.keySet().forEach(computer -> {
                 try{
                     computer.updateShare(share);
@@ -199,6 +200,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         public SpaceTasksExecuter(int preFetchNum){
             turnedOn = preFetchNum > 1;
+            turnedOn = false;
         }
 
         public void run(){
@@ -302,9 +304,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     catch (RemoteException e){
                         try{
+                            System.out.println(computerProxies);
                             putReady(taskList);
                             //Computer.tasksQ.put(t);
                             computerProxies.remove(computer);
+                            System.out.println(computerProxies);
                         }
                         catch(RemoteException ex){
                             ex.printStackTrace();

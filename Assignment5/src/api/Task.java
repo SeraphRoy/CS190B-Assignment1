@@ -26,12 +26,15 @@ public abstract class Task implements Serializable{
 
     public long id;
 
+    public Share share;
+
     public Task(Space space, List<Argument> list, Continuation cont){
         this.space = space;
         this.argumentList = list;
         this.cont = cont;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
         this.computer = null;
+        this.share = null;
     }
 
     public Task(Space space, List<Argument> list){
@@ -40,6 +43,7 @@ public abstract class Task implements Serializable{
         this.cont = null;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
         this.computer = null;
+        this.share = null;
     }
 
     public ResultWrapper execute(){
@@ -51,7 +55,7 @@ public abstract class Task implements Serializable{
                     result = new ResultWrapper(1, cont, o, space, this);
                     Comparable comp = generateShareValue(o);
                     Share newShare = new Share(comp);
-                    if(newShare.isBetterThan(computer.getShare())){
+                    if(newShare.isBetterThan(this.share)){
                         result.needToUpdate = true;
                         computer.updateShare(newShare);
                     }

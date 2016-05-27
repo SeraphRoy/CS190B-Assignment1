@@ -26,6 +26,7 @@ public class ClientTsp extends Client{
         list.add(argument1);
         Continuation cont = new Continuation(-1, 0);
         Task t = new TaskTsp(c.getSpace(), list, cont);
+        t.share = new Share(Double.MAX_VALUE);
         c.setTask(t);
         c.run();
     }
