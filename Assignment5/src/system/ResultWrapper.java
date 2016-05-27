@@ -2,7 +2,7 @@ package system;
 
 import api.*;
 
-public class ResultWrapper{
+public class ResultWrapper implements java.io.Serializable{
     public int type;
 
     public Continuation cont = null;
@@ -31,4 +31,5 @@ public class ResultWrapper{
         this.space = space;
         this.task = task;
     }
+
 }

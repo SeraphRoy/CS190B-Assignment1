@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.lang.InterruptedException;
+import java.util.concurrent.BlockingQueue;
 /**
  *
  * @author Peter Cappello
@@ -41,5 +42,7 @@ public interface Space extends Remote
     public SpawnResult getSpawnResult() throws RemoteException, InterruptedException;
 
     public void updateShare(Share share) throws RemoteException;
+
+    public void putComputerResults(BlockingQueue<ResultWrapper> resultQ) throws RemoteException, InterruptedException;
 
 }

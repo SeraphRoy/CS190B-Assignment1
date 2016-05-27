@@ -29,6 +29,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private BlockingQueue<SpawnResult> spawnResultQ;
     private ShareHandler shareHandler;
     public static boolean MULTICORE = false;
+    private BlockingQueue<BlockingQueue<ResultWrapper>> computerResults;
 
     public static int preFetchNum = 1;
 
@@ -39,12 +40,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<Object>();
+        computerResults = new LinkedBlockingQueue<>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
         this.share = share;
         shareHandler = new ShareHandler(share);
         new Thread(shareHandler).start();
         new Thread(new SpawnResultHandler()).start();
+        new Thread(new ComputerResultHandler()).start();
     }
 
     // task's argumentList IS already initialized
@@ -137,6 +140,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     e.printStackTrace();
                 }
             });
+    }
+
+    public void putComputerResults(BlockingQueue<ResultWrapper> resultQ) throws RemoteException, InterruptedException{
+        computerResults.put(resultQ);
     }
 
     @Override
@@ -253,6 +260,60 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                 }
                 catch(InterruptedException e){
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class ComputerResultHandler implements Runnable{
+        public ComputerResultHandler(){}
+
+        public void run(){
+            while(true){
+                BlockingQueue<ResultWrapper> resultQ = null;
+                try{
+                    resultQ = computerResults.take();
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                for(ResultWrapper result : resultQ){
+                    if(result.type == 0){
+                        try{
+                            result.space.sendArgument(result.cont);
+                        }
+                        catch(RemoteException | InterruptedException e){
+                            System.err.println("error from result type0");
+                            e.printStackTrace();
+                        }
+                    }
+                    else if(result.type == 1){
+                        try{
+                            if(!result.needToUpdate)
+                                result.space.sendArgument(result.cont, result.result);
+                            else
+                                result.space.sendArgument(result.cont, result.result, result.task.computer.getShare());
+                        }
+                        catch(RemoteException | InterruptedException e){
+                            System.err.println("Error in sending arguments");
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        try{
+                            result.space.putSpawnResult(result.spawnResult);
+                        }
+                        catch(RemoteException | InterruptedException e){
+                            System.err.println("Error in putting spawn result");
+                            e.printStackTrace();
+                        }
+                    }
+                    try{
+                        result.space.putDoneTask(result.task);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
