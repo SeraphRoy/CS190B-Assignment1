@@ -9,8 +9,8 @@ import java.rmi.RemoteException;
 
 public class TaskCompose extends Task<List<Integer>> implements SpaceCallable{
 
-    public TaskCompose(Space space, List<Argument> list, Continuation cont, int argc){
-        super(space, list, cont);
+    public TaskCompose(List<Argument> list, Continuation cont, int argc){
+        super(list, cont);
         this.argc = argc;
     }
 

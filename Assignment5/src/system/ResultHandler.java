@@ -9,8 +9,11 @@ public class ResultHandler implements Runnable{
 
     private BlockingQueue<ResultWrapper> resultQ;
 
-    public ResultHandler(BlockingQueue<ResultWrapper> resultQ){
+    private Space space;
+
+    public ResultHandler(BlockingQueue<ResultWrapper> resultQ, Space space){
         this.resultQ = resultQ;
+        this.space = space;
     }
 
     public void run(){
@@ -36,9 +39,9 @@ public class ResultHandler implements Runnable{
             catch(InterruptedException e){
                 e.printStackTrace();
             }
-            result.process();
+            result.process(space);
             try{
-                result.space.putDoneTask(result.task);
+                space.putDoneTask(result.task);
             }
             catch(Exception e){
                 e.printStackTrace();

@@ -14,8 +14,6 @@ import javax.swing.JLabel;
  */
 public abstract class Task<T> implements Serializable{
 
-    final protected Space space;
-
     public Computer computer;
 
     final protected List<Argument> argumentList;
@@ -28,8 +26,7 @@ public abstract class Task<T> implements Serializable{
 
     public Share share;
 
-    public Task(Space space, List<Argument> list, Continuation cont){
-        this.space = space;
+    public Task(List<Argument> list, Continuation cont){
         this.argumentList = list;
         this.cont = cont;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
@@ -37,8 +34,7 @@ public abstract class Task<T> implements Serializable{
         this.share = null;
     }
 
-    public Task(Space space, List<Argument> list){
-        this.space = space;
+    public Task(List<Argument> list){
         this.argumentList = list;
         this.cont = null;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
@@ -53,7 +49,7 @@ public abstract class Task<T> implements Serializable{
             if(needToCompute()){
                 T o = generateArgument();
                 try{
-                    result = new ResultWrapper(1, cont, o, space, this);
+                    result = new ResultWrapper(1, cont, o, this);
                     Comparable comp = generateShareValue(o);
                     Share newShare = new Share(comp);
                     if(newShare.isBetterThan(this.share) && updateComputerShare){
@@ -70,7 +66,7 @@ public abstract class Task<T> implements Serializable{
             else{
                 try{
                     SpawnResult spawnResult  = spawn();
-                    result = new ResultWrapper(2, spawnResult, space, this);
+                    result = new ResultWrapper(2, spawnResult, this);
                     return result;
                 }
                 catch(Exception e){
@@ -79,7 +75,7 @@ public abstract class Task<T> implements Serializable{
                 }
             }
         }
-        result = new ResultWrapper(0, cont, null, space, this);
+        result = new ResultWrapper(0, cont, null, this);
         return result;
     }
 
@@ -123,8 +119,6 @@ public abstract class Task<T> implements Serializable{
     public Continuation getCont(){return cont;}
 
     public void setCont(Continuation cont){this.cont = cont;}
-
-    public Space getSapce(){return space;}
 
     public int getArgc(){return argc;}
 

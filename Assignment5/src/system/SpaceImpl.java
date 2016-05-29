@@ -152,7 +152,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         //System.exit( 0 );
     }
 
-    public SpaceTasksExecuter createExecuter(int preFetchNum){
+    public SpaceTasksExecuter createExecuter(){
         return new SpaceTasksExecuter();
     }
 
@@ -163,7 +163,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             Registry registry = LocateRegistry.createRegistry(Space.PORT);
             Share share = new Share(Double.MAX_VALUE);
             SpaceImpl space = new SpaceImpl(share);
-            new Thread(space.createExecuter(Integer.parseInt(args[1]))).start();
+            new Thread(space.createExecuter()).start();
             registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
         } catch (Exception e){
@@ -211,7 +211,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     Task task = spaceClosure.take().getTask();
                     if(task.spaceCallable()){
                         ResultWrapper result = task.execute(false);
-                        result.process();
+                        result.process(SpaceImpl.this);
                     }
                     else{
                         Closure closure = new Closure(task.getArgc(), task);
@@ -238,9 +238,9 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     e.printStackTrace();
                 }
                 for(ResultWrapper result : resultQ){
-                    result.process();
+                    result.process(SpaceImpl.this);
                     try{
-                        result.space.putDoneTask(result.task);
+                        putDoneTask(result.task);
                     }
                     catch(Exception e){
                         e.printStackTrace();
@@ -282,7 +282,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         public ComputerProxy(Computer computer, int numWorkerProxies){
             this.computer = computer;
-            for ( int id = 0; id < 8; id++ ){
+            for ( int id = 0; id < numWorkerProxies; id++ ){
                 WorkerProxy workerProxy = new WorkerProxy(id, computer);
                 workerMap.put( id, workerProxy );
             }
@@ -366,7 +366,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         task = SpaceImpl.this.takeReady();
                         taskStartTime = System.nanoTime();
                         totalWaitingTime += ((taskStartTime - taskEndTime) / 1000000);
-                        computer.Execute(task);
+                        computer.Execute(task, SpaceImpl.this);
                         taskEndTime = System.nanoTime();
                         totalExecuteTime += ((taskEndTime - taskStartTime) / 1000000);
                     }
@@ -379,8 +379,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         Logger.getLogger( this.getClass().getName() )
                             .log( Level.INFO, null, ex );
                     }
-                    System.out.println("totalWaitingTime: " + totalWaitingTime);
-                    System.out.println("totalExecuteTime " + totalExecuteTime);
+                    //System.out.println("totalWaitingTime: " + totalWaitingTime);
+                    //System.out.println("totalExecuteTime " + totalExecuteTime);
                 }
             }
         }

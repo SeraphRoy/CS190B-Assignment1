@@ -5,13 +5,13 @@ import java.rmi.RemoteException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.List;
-import api.Task;
+import api.*;
 
 public interface Computer extends Remote{
 
-    public void Execute(Task task) throws RemoteException;
+    public void Execute(Task task, Space space) throws RemoteException;
 
-    public void Execute(List<Task> tasks) throws RemoteException;
+    //public void Execute(List<Task> tasks, Space space) throws RemoteException;
 
     public void exit() throws RemoteException;
 

@@ -58,20 +58,20 @@ public class TaskTsp extends Task<List<Integer>>{
 
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
-    public TaskTsp(Space space, List<Argument> list, Continuation cont){
-        super(space, list, cont);
+    public TaskTsp(List<Argument> list, Continuation cont){
+        super(list, cont);
         argc = 2;
     }
 
-    public TaskTsp(Space space, List<Argument> list){
-        super(space, list);
+    public TaskTsp(List<Argument> list){
+        super(list);
         argc = 2;
     }
 
     @Override
     public SpawnResult spawn() throws RemoteException, InterruptedException{
         List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
-        Task t = new TaskCompose(space, new ArrayList<Argument>(), cont, tempList.size());
+        Task t = new TaskCompose(new ArrayList<Argument>(), cont, tempList.size());
         t.computer = this.computer;
         t.share = new Share(this.computer.getShare().getValue());
         List<Task> list = new ArrayList<>();
@@ -91,7 +91,7 @@ public class TaskTsp extends Task<List<Integer>>{
             List<Argument> newList = new ArrayList<>();
             newList.add(argument0);
             newList.add(argument1);
-            Task subTask = new TaskTsp(space, newList);
+            Task subTask = new TaskTsp(newList);
             subTask.computer = this.computer;
             subTask.share = new Share(this.computer.getShare().getValue());
             list.add(subTask);

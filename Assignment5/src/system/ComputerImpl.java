@@ -36,7 +36,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         //     new Thread(new ResultHandler(resultQ)).start();
     }
 
-    public void Execute(Task task) throws RemoteException{
+    public void Execute(Task task, Space space) throws RemoteException{
         numTasks++;
         try{
             final long taskStartTime = System.nanoTime();
@@ -44,10 +44,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
             task.share = new Share(share.getValue());
             ResultWrapper result = task.execute(true);
             final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-            // Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-            //     .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+            Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+                .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
             if(result != null)
-                result.process();
+                result.process(space);
                 //resultQ.put(result);
             //if(tasksQ.size() == 0)
             // tasksQ.put(task);
@@ -62,13 +62,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         }
     }
 
-    public void Execute(List<Task> tasks) throws RemoteException{
-        for(Task t : tasks){
-            Execute(t);
-        }
-    }
-
-    public synchronized Share getShare() throws RemoteException{return share;}
+    public synchronized Share getShare(){return share;}
 
     public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
@@ -79,8 +73,8 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{
-        SpaceImpl.MULTICORE = Boolean.parseBoolean(args[0]);
-        SpaceImpl.preFetchNum = Integer.parseInt(args[1]);
+        SpaceImpl.MULTICORE = true;
+        SpaceImpl.preFetchNum = 10;
         final String domainName = "localhost";
         System.setSecurityManager( new SecurityManager() );
         final String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
