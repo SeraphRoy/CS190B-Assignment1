@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.rmi.RemoteException;
 
-public class TaskCompose extends Task{
+public class TaskCompose extends Task<List<Integer>>{
 
     public TaskCompose(Space space, List<Argument> list, Continuation cont, int argc){
         super(space, list, cont);
@@ -15,7 +15,7 @@ public class TaskCompose extends Task{
     }
 
      @Override
-     public Object generateArgument(){
+     public List<Integer> generateArgument(){
          List<Integer> tour = new LinkedList<>();
          double shortestTourDistance = Double.MAX_VALUE;
          for(Argument argument : argumentList){
@@ -35,7 +35,7 @@ public class TaskCompose extends Task{
      }
 
     @Override
-    public Comparable generateShareValue(Object o){
+    public Comparable generateShareValue(List<Integer> o){
         double distance = TaskTsp.tourDistance((List<Integer>)o);
         return distance;
     }

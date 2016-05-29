@@ -1,15 +1,15 @@
 package api;
 import java.io.Serializable;
 
-public class Argument implements Serializable{
-    final private Object value;
+public class Argument<T> implements Serializable{
+    final private T value;
     final private int index;
 
-    public Argument(Object value, int index){
+    public Argument(T value, int index){
         this.value = value;
         this.index = index;
     }
-    public Object getValue(){ return value;}
+    public T getValue(){ return value;}
 
     public int getIndex(){ return index;}
 }

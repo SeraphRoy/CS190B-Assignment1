@@ -39,7 +39,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         readyClosure = new LinkedBlockingQueue<Closure>();
         spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
-        resultQueue = new LinkedBlockingQueue<Object>();
+        resultQueue = new LinkedBlockingQueue<>();
         computerResults = new LinkedBlockingQueue<>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
@@ -51,15 +51,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     // task's argumentList IS already initialized
-    public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException{
+    public void sendArgument(Continuation cont, Argument argument) throws RemoteException, InterruptedException{
 
         Closure closure = waitingClosure.get(cont.getClosureId());
         if(closure == null){
-            this.resultQueue.put(result);
+            this.resultQueue.put(argument.getValue());
             return;
         }
 
-        Argument argument = new Argument(result, cont.getSlot());
         closure.addArgument(argument);
         if(closure.getCounter() == 0){
             spaceClosure.put(closure);
@@ -67,8 +66,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         }
     }
 
-    public void sendArgument(Continuation cont, Object result, Share share) throws RemoteException, InterruptedException{
-        sendArgument(cont, result);
+    public void sendArgument(Continuation cont, Argument argument, Share share) throws RemoteException, InterruptedException{
+        sendArgument(cont, argument);
         shareHandler.updateShare(share);
     }
 
@@ -227,10 +226,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         }
                         else if(result.type == 1){
                             try{
-                                if(!result.needToUpdate)
-                                    sendArgument(result.cont, result.result);
-                                else
-                                    sendArgument(result.cont, result.result, new Share(result.task.generateShareValue(result.result)));
+                                if(!result.needToUpdate){
+                                    Argument argument = new Argument(result.result, result.cont.getSlot());
+                                    sendArgument(result.cont, argument);
+                                }
+                                else{
+                                    Argument argument = new Argument(result.result, result.cont.getSlot());
+                                    sendArgument(result.cont, argument, new Share(result.task.generateShareValue(result.result)));
+                                }
                             }
                             catch(RemoteException | InterruptedException e){
                                 System.err.println("Error in sending arguments");
@@ -289,10 +292,14 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     else if(result.type == 1){
                         try{
-                            if(!result.needToUpdate)
-                                result.space.sendArgument(result.cont, result.result);
-                            else
-                                result.space.sendArgument(result.cont, result.result, result.task.computer.getShare());
+                            if(!result.needToUpdate){
+                                Argument argument = new Argument(result.result, result.cont.getSlot());
+                                result.space.sendArgument(result.cont, argument);
+                            }
+                            else{
+                                Argument argument = new Argument(result.result, result.cont.getSlot());
+                                result.space.sendArgument(result.cont, argument, result.task.computer.getShare());
+                            }
                         }
                         catch(RemoteException | InterruptedException e){
                             System.err.println("Error in sending arguments");

@@ -12,7 +12,7 @@ import javax.swing.JLabel;
  * The client should override spawn(), spawnNext(), generateArgument(), and needToCompute() for general tasks,
  * and only the last two for compose tasks.
  */
-public abstract class Task implements Serializable{
+public abstract class Task<T> implements Serializable{
 
     final protected Space space;
 
@@ -50,7 +50,7 @@ public abstract class Task implements Serializable{
         ResultWrapper result = null;
         if(needToProceed()){
             if(needToCompute()){
-                Object o = generateArgument();
+                T o = generateArgument();
                 try{
                     result = new ResultWrapper(1, cont, o, space, this);
                     Comparable comp = generateShareValue(o);
@@ -82,9 +82,9 @@ public abstract class Task implements Serializable{
         return result;
     }
 
-    public abstract Comparable generateShareValue(Object o);
+    public abstract Comparable generateShareValue(T o);
 
-    public JLabel viewResult(Object result){
+    public JLabel viewResult(T result){
         System.err.println("You shouldn't reach this point");
         return new JLabel();
     }
@@ -98,7 +98,7 @@ public abstract class Task implements Serializable{
         return new Continuation(t.id, slot);
     }
 
-    public abstract Object generateArgument();
+    public abstract T generateArgument();
 
     //default is true for compose tasks
     //normal tasks NEED override this

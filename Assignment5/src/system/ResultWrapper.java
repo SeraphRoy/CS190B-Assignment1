@@ -2,12 +2,12 @@ package system;
 
 import api.*;
 
-public class ResultWrapper implements java.io.Serializable{
+public class ResultWrapper<T> implements java.io.Serializable{
     public int type;
 
     public Continuation cont = null;
 
-    public Object result = null;
+    public T result = null;
 
     public SpawnResult spawnResult = null;
 
@@ -24,7 +24,7 @@ public class ResultWrapper implements java.io.Serializable{
         this.task = task;
     }
 
-    public ResultWrapper(int type, Continuation cont, Object result, Space space, Task task){
+    public ResultWrapper(int type, Continuation cont, T result, Space space, Task task){
         this.type = type;
         this.cont = cont;
         this.result = result;

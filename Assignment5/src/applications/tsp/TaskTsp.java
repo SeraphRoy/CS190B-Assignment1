@@ -16,7 +16,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
 
-public class TaskTsp extends Task{
+public class TaskTsp extends Task<List<Integer>>{
 
     static final private int NUM_PIXALS = 600;
 
@@ -100,7 +100,7 @@ public class TaskTsp extends Task{
     }
 
     @Override
-    public Object generateArgument(){
+    public List<Integer> generateArgument(){
         List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         // initial value for shortestTour and its distance.
         for(int i = 0; i < CITIES.length; i++)
@@ -120,8 +120,8 @@ public class TaskTsp extends Task{
     }
 
     @Override
-    public Comparable generateShareValue(Object o){
-        double distance = tourDistance((List<Integer>)o);
+    public Comparable generateShareValue(List<Integer> o){
+        double distance = tourDistance(o);
         return distance;
     }
 
@@ -173,9 +173,9 @@ public class TaskTsp extends Task{
     }
 
     @Override
-    public JLabel viewResult(Object result)
+    public JLabel viewResult(List<Integer> result)
     {
-        List<Integer> cityList = (List<Integer>)result;
+        List<Integer> cityList = result;
         Logger.getLogger( this.getClass().getCanonicalName() ).log( Level.INFO, "Tour: {0}", cityList.toString() );
         Integer[] tour = cityList.toArray( new Integer[0] );
 

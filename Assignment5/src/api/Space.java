@@ -6,10 +6,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.lang.InterruptedException;
 import java.util.concurrent.BlockingQueue;
-/**
- *
- * @author Peter Cappello
- */
+
 public interface Space extends Remote
 {
     public static int PORT = 8001;
@@ -25,9 +22,9 @@ public interface Space extends Remote
 
     public void putWaiting(Task task) throws RemoteException, InterruptedException;
 
-    public void sendArgument(Continuation cont, Object result) throws RemoteException, InterruptedException;
+    public void sendArgument(Continuation cont, Argument argument) throws RemoteException, InterruptedException;
 
-    public void sendArgument(Continuation cont, Object result, Share share) throws RemoteException, InterruptedException;
+    public void sendArgument(Continuation cont, Argument argument, Share share) throws RemoteException, InterruptedException;
 
     public void sendArgument(Continuation cont) throws RemoteException, InterruptedException;
 
