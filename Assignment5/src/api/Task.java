@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 import java.util.List;
 import java.rmi.RemoteException;
 import javax.swing.JLabel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *

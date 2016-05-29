@@ -101,13 +101,21 @@ public class TaskTsp extends Task<List<Integer>>{
 
     @Override
     public List<Integer> generateArgument(){
-        List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
+        List<Integer> partialCityList = new ArrayList<>();
+        for(Integer i : (List<Integer>)argumentList.get(1).getValue()){
+            partialCityList.add(i);
+        }
+        //List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         // initial value for shortestTour and its distance.
         for(int i = 0; i < CITIES.length; i++)
             shortestTour.add(i);
 
         List<List<Integer>> allPermute = new ArrayList<>();
+        final long taskStartTime = System.nanoTime();
         iterate(partialCityList, 0, allPermute);
+        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+        Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+            .log( Level.INFO, "Task Side: Task {0}Task time: {1} ms.", new Object[]{ this, taskRunTime } );
         for(List<Integer> tour : allPermute){
             List<Integer> newTour = new ArrayList<>(tour);
             newTour = addPrefix(newTour);
