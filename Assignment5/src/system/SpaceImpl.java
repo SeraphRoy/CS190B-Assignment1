@@ -23,7 +23,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     protected BlockingQueue<Closure> readyClosure;
     protected BlockingQueue<Closure> spaceClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
-    private LinkedBlockingQueue<Object> resultQueue;
+    private LinkedBlockingQueue<Argument> resultQueue;
     private final Map<Computer,ComputerProxy> computerProxies = Collections.synchronizedMap( new HashMap<>() );
     private HashSet<Long> doneTasks;
     private BlockingQueue<SpawnResult> spawnResultQ;
@@ -55,7 +55,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         Closure closure = waitingClosure.get(cont.getClosureId());
         if(closure == null){
-            this.resultQueue.put(argument.getValue());
+            this.resultQueue.put(argument);
             return;
         }
 
@@ -126,7 +126,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         return readyClosure.take().getTask();
     }
 
-    public Object getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
+    public Argument getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
 
     public synchronized void updateShare(Share share) throws RemoteException{
         this.share = share.getBetterOne(this.share);
@@ -206,7 +206,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         public SpaceTasksExecuter(int preFetchNum){
             turnedOn = preFetchNum > 1;
-            turnedOn = false;
+            //turnedOn = false;
         }
 
         public void run(){
@@ -214,47 +214,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                 try{
                     Task task = spaceClosure.take().getTask();
                     if(turnedOn){
-                        ResultWrapper result = task.execute();
-                        if(result.type == 0){
-                            try{
-                                sendArgument(result.cont);
-                            }
-                            catch(RemoteException | InterruptedException e){
-                                System.err.println("error from result type0");
-                                e.printStackTrace();
-                            }
-                        }
-                        else if(result.type == 1){
-                            try{
-                                if(!result.needToUpdate){
-                                    Argument argument = new Argument(result.result, result.cont.getSlot());
-                                    sendArgument(result.cont, argument);
-                                }
-                                else{
-                                    Argument argument = new Argument(result.result, result.cont.getSlot());
-                                    sendArgument(result.cont, argument, new Share(result.task.generateShareValue(result.result)));
-                                }
-                            }
-                            catch(RemoteException | InterruptedException e){
-                                System.err.println("Error in sending arguments");
-                                e.printStackTrace();
-                            }
-                        }
-                        else{
-                            try{
-                                result.space.putSpawnResult(result.spawnResult);
-                            }
-                            catch(RemoteException | InterruptedException e){
-                                System.err.println("Error in putting spawn result");
-                                e.printStackTrace();
-                            }
-                        }
-                        try{
-                            result.space.putDoneTask(result.task);
-                        }
-                        catch(Exception e){
-                            e.printStackTrace();
-                        }
+                        ResultWrapper result = task.execute(false);
+                        result.process();
                     }
                     else{
                         Closure closure = new Closure(task.getArgc(), task);
@@ -281,40 +242,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     e.printStackTrace();
                 }
                 for(ResultWrapper result : resultQ){
-                    if(result.type == 0){
-                        try{
-                            result.space.sendArgument(result.cont);
-                        }
-                        catch(RemoteException | InterruptedException e){
-                            System.err.println("error from result type0");
-                            e.printStackTrace();
-                        }
-                    }
-                    else if(result.type == 1){
-                        try{
-                            if(!result.needToUpdate){
-                                Argument argument = new Argument(result.result, result.cont.getSlot());
-                                result.space.sendArgument(result.cont, argument);
-                            }
-                            else{
-                                Argument argument = new Argument(result.result, result.cont.getSlot());
-                                result.space.sendArgument(result.cont, argument, result.task.computer.getShare());
-                            }
-                        }
-                        catch(RemoteException | InterruptedException e){
-                            System.err.println("Error in sending arguments");
-                            e.printStackTrace();
-                        }
-                    }
-                    else{
-                        try{
-                            result.space.putSpawnResult(result.spawnResult);
-                        }
-                        catch(RemoteException | InterruptedException e){
-                            System.err.println("Error in putting spawn result");
-                            e.printStackTrace();
-                        }
-                    }
+                    result.process();
                     try{
                         result.space.putDoneTask(result.task);
                     }

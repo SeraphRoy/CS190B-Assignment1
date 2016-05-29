@@ -30,7 +30,7 @@ public interface Space extends Remote
 
     public Task takeReady() throws RemoteException, InterruptedException;
 
-    public Object getResult() throws RemoteException, InterruptedException;
+    public Argument getResult() throws RemoteException, InterruptedException;
 
     public void exit() throws RemoteException;
 

@@ -36,7 +36,7 @@ public class Core implements Runnable{
                 catch(RemoteException e){
                     e.printStackTrace();
                 }
-                ResultWrapper result = task.execute();
+                ResultWrapper result = task.execute(true);
                 if(result != null)
                     resultQ.put(result);
                 synchronized (readyTasks){

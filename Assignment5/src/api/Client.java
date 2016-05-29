@@ -44,9 +44,9 @@ public class Client extends JFrame{
         final long startTime = System.nanoTime();
         try{
             space.putReady(task);
-            Object temp = space.getResult();
+            Argument temp = space.getResult();
             //System.out.println("yosh " + temp);
-            view(task.viewResult(temp));
+            view(task.viewResult(temp.getValue()));
             //space.exit();
         }
         catch(InterruptedException e){

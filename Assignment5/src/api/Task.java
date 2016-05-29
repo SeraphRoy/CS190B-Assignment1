@@ -46,7 +46,8 @@ public abstract class Task<T> implements Serializable{
         this.share = null;
     }
 
-    public ResultWrapper execute(){
+    // updateComputerShare is false only when the task is executed on space
+    public ResultWrapper execute(boolean updateComputerShare){
         ResultWrapper result = null;
         if(needToProceed()){
             if(needToCompute()){
@@ -55,7 +56,7 @@ public abstract class Task<T> implements Serializable{
                     result = new ResultWrapper(1, cont, o, space, this);
                     Comparable comp = generateShareValue(o);
                     Share newShare = new Share(comp);
-                    if(newShare.isBetterThan(this.share)){
+                    if(newShare.isBetterThan(this.share) && updateComputerShare){
                         result.needToUpdate = true;
                         computer.updateShare(newShare);
                     }
