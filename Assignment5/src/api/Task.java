@@ -85,6 +85,11 @@ public abstract class Task<T> implements Serializable{
 
     public abstract Comparable generateShareValue(T o);
 
+    // default is based on SpaceCallable marking interface
+    public boolean spaceCallable(){
+        return this instanceof SpaceCallable;
+    }
+
     public JLabel viewResult(T result){
         System.err.println("You shouldn't reach this point");
         return new JLabel();

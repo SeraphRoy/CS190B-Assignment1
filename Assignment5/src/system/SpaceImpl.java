@@ -82,16 +82,17 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     // task's argumentList is ready
+    // it actually put closure into spaceClosure so that it could possibly be runned on space
     public void putReady(Task task) throws RemoteException, InterruptedException{
         Closure closure = new Closure(task.getArgc(), task);
-        readyClosure.put(closure);
+        spaceClosure.put(closure);
     }
 
     public void putReady(List<Task> tasks) throws RemoteException, InterruptedException{
         for(Task t : tasks){
             if(!doneTasks.contains(t.id)){
                 Closure closure = new Closure(t.getArgc(), t);
-                readyClosure.put(closure);
+                spaceClosure.put(closure);
             }
         }
     }
@@ -114,11 +115,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         waitingClosure.put(closure.getClosureId(), closure);
     }
 
-    public void register(Computer computer) throws RemoteException, InterruptedException{
+    public void register(Computer computer, int numProcessors) throws RemoteException, InterruptedException{
         computer.setShare(new Share(this.share.getValue()));
-        ComputerProxy c = new ComputerProxy(computer);
+        ComputerProxy c = new ComputerProxy(computer, 2 * numProcessors);
         computerProxies.put( computer, c);
-        new Thread(c).start();
+        c.startWorkerProxies();
         System.out.println("Computer #" + c.computerId + " is registered");
     }
 
@@ -135,7 +136,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                 try{
                     computer.updateShare(share);
                 }
-                catch(RemoteException e){
+                catch(Exception e){
                     e.printStackTrace();
                 }
             });
@@ -152,7 +153,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public SpaceTasksExecuter createExecuter(int preFetchNum){
-        return new SpaceTasksExecuter(preFetchNum);
+        return new SpaceTasksExecuter();
     }
 
     public static void main(String[] args){
@@ -202,18 +203,13 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public class SpaceTasksExecuter implements Runnable{
-        private boolean turnedOn;
-
-        public SpaceTasksExecuter(int preFetchNum){
-            turnedOn = preFetchNum > 1;
-            //turnedOn = false;
-        }
+        public SpaceTasksExecuter(){}
 
         public void run(){
             while(true){
                 try{
                     Task task = spaceClosure.take().getTask();
-                    if(turnedOn){
+                    if(task.spaceCallable()){
                         ResultWrapper result = task.execute(false);
                         result.process();
                     }
@@ -277,49 +273,116 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         }
     }
 
-    private class ComputerProxy implements Runnable{
+    private class ComputerProxy{
         private Computer computer;
 
         final protected int computerId = computerIds++;
 
-        public ComputerProxy(Computer computer){
+        final private Map<Integer, WorkerProxy> workerMap = new HashMap<>();
+
+        public ComputerProxy(Computer computer, int numWorkerProxies){
             this.computer = computer;
-        }
-
-        @Override
-        public void run(){
-            List<Task> taskList = new ArrayList<>();
-            try{
-                while(true){
-                    Task t = null;
-                    long startTime = System.nanoTime();
-                    try{
-                        t = SpaceImpl.this.takeReady();
-                        taskList.add(t);
-                        computer.Execute(t);
-                    }
-                    catch (RemoteException e){
-                        try{
-                            putReady(taskList);
-                            //Computer.tasksQ.put(t);
-                            computerProxies.remove(computer);
-                        }
-                        catch(RemoteException ex){
-                            ex.printStackTrace();
-                        }
-                        System.out.println("Computer #" + computerId + " is dead!!!");
-                        return;
-                    }
-                    // Logger.getLogger( this.getClass().getCanonicalName() )
-                    //     .log( Level.INFO, "Run time: {0} ms.", ( System.nanoTime() - startTime) / 1000000 );
-
-                }
+            for ( int id = 0; id < 8; id++ ){
+                WorkerProxy workerProxy = new WorkerProxy(id, computer);
+                workerMap.put( id, workerProxy );
             }
-            catch (InterruptedException ignore) {}
         }
+
+        private void startWorkerProxies(){
+            workerMap.values().forEach( Thread::start );
+        }
+
+        private void unregister( Task task, Computer computer, int workerProxyId ){
+            try{
+                putReady(task);
+            }
+            catch(RemoteException | InterruptedException e){
+                e.printStackTrace();
+            }
+            workerMap.remove( workerProxyId );
+            Logger.getLogger( this.getClass().getName() )
+                .log( Level.WARNING, "Computer {0}: Worker failed.", workerProxyId );
+            if ( workerMap.isEmpty() ){
+                computerProxies.remove( computer );
+                Logger.getLogger( ComputerProxy.class.getCanonicalName() )
+                    .log( Level.WARNING, "Computer {0} failed.", computerId );
+            }
+        }
+
+        // @Override
+        // public void run(){
+        //     List<Task> taskList = new ArrayList<>();
+        //     try{
+        //         while(true){
+        //             Task t = null;
+        //             long startTime = System.nanoTime();
+        //             try{
+        //                 t = SpaceImpl.this.takeReady();
+        //                 taskList.add(t);
+        //                 computer.Execute(t);
+        //             }
+        //             catch (RemoteException e){
+        //                 try{
+        //                     putReady(taskList);
+        //                     //Computer.tasksQ.put(t);
+        //                     computerProxies.remove(computer);
+        //                 }
+        //                 catch(RemoteException ex){
+        //                     ex.printStackTrace();
+        //                 }
+        //                 System.out.println("Computer #" + computerId + " is dead!!!");
+        //                 return;
+        //             }
+        //             // Logger.getLogger( this.getClass().getCanonicalName() )
+        //             //     .log( Level.INFO, "Run time: {0} ms.", ( System.nanoTime() - startTime) / 1000000 );
+
+        //         }
+        //     }
+        //     catch (InterruptedException ignore) {}
+        // }
 
         public void exit() {
             try { computer.exit(); } catch ( RemoteException ignore ) {}
+        }
+
+        private class WorkerProxy extends Thread{
+            final Integer id;
+            Computer computer;
+
+            private WorkerProxy(int id, Computer computer) {
+                this.id = id;
+                this.computer = computer;
+            }
+
+            @Override
+            public void run(){
+                long taskStartTime = 0;
+                long taskEndTime = 0;
+                long totalExecuteTime = 0;
+                long totalWaitingTime = 0;
+                while (true){
+                    Task task = null;
+                    try{
+                        task = SpaceImpl.this.takeReady();
+                        taskStartTime = System.nanoTime();
+                        totalWaitingTime += ((taskStartTime - taskEndTime) / 1000000);
+                        computer.Execute(task);
+                        taskEndTime = System.nanoTime();
+                        totalExecuteTime += ((taskEndTime - taskStartTime) / 1000000);
+                    }
+                    catch(RemoteException ignore){
+                        unregister( task, computer, id );
+                        ignore.printStackTrace();
+                        return;
+                    }
+                    catch (InterruptedException ex){
+                        Logger.getLogger( this.getClass().getName() )
+                            .log( Level.INFO, null, ex );
+                    }
+                    System.out.println("totalWaitingTime: " + totalWaitingTime);
+                    System.out.println("totalExecuteTime " + totalExecuteTime);
+                }
+            }
         }
     }
 }

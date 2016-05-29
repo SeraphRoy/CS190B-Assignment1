@@ -12,7 +12,7 @@ public interface Space extends Remote
     public static int PORT = 8001;
     public static String SERVICE_NAME = "Space";
 
-    public void register( Computer computer ) throws RemoteException, InterruptedException;
+    public void register( Computer computer, int numProcessors) throws RemoteException, InterruptedException;
 
     public void putDoneTask(Task task) throws RemoteException, InterruptedException;
 

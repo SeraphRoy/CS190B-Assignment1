@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.rmi.RemoteException;
 
-public class TaskCompose extends Task<List<Integer>>{
+public class TaskCompose extends Task<List<Integer>> implements SpaceCallable{
 
     public TaskCompose(Space space, List<Argument> list, Continuation cont, int argc){
         super(space, list, cont);

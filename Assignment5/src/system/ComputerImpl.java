@@ -25,32 +25,37 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
 
     public final int coreNum;
 
-    private BlockingQueue<Task> tasksQ = new LinkedBlockingQueue<>();
+    private BlockingQueue<ResultWrapper> resultQ;;
 
     private Share share = null;
 
     public ComputerImpl() throws RemoteException{
-        System.out.println(SpaceImpl.MULTICORE + " " + SpaceImpl.preFetchNum);
-        int temp = Runtime.getRuntime().availableProcessors()/2 - 1;
-        if (temp < 1)
-            temp = 2;
-        coreNum = SpaceImpl.MULTICORE ? temp : 1;
-        for(int i = 0; i < coreNum; i++){
-            new Thread(new Core(tasksQ, this)).start();
-        }
+        resultQ = new LinkedBlockingQueue<>();
+        coreNum = Runtime.getRuntime().availableProcessors();
+        // for(int i = 0; i < coreNum; i++)
+        //     new Thread(new ResultHandler(resultQ)).start();
     }
 
     public void Execute(Task task) throws RemoteException{
         numTasks++;
         try{
-            //task.run();
+            final long taskStartTime = System.nanoTime();
+            task.computer = this;
+            task.share = new Share(share.getValue());
+            ResultWrapper result = task.execute(true);
+            final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+            // Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+            //     .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
+            if(result != null)
+                result.process();
+                //resultQ.put(result);
             //if(tasksQ.size() == 0)
-            tasksQ.put(task);
-            if(tasksQ.size() > SpaceImpl.preFetchNum)
-                //if(tasksQ.size() > 30)
-                synchronized(tasksQ){
-                    tasksQ.wait();
-                }
+            // tasksQ.put(task);
+            // if(tasksQ.size() > SpaceImpl.preFetchNum)
+            //     //if(tasksQ.size() > 30)
+            //     synchronized(tasksQ){
+            //         tasksQ.wait();
+            //     }
         }
         catch(Exception e){
             e.printStackTrace();
@@ -82,7 +87,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         final Space space = (Space) Naming.lookup(url);
         ComputerImpl computer = new ComputerImpl();
         try{
-            space.register(computer);
+            space.register(computer, computer.coreNum);
         }
         catch(InterruptedException e){
             e.printStackTrace();
