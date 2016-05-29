@@ -33,8 +33,24 @@ public class ClientTsp extends Client{
 
     static public double calculateUpperBound(){
         List<Integer> tour = new ArrayList<>();
-        for(int i = 0; i < TaskTsp.CITIES.length; i++){
-            tour.add(i);
+        HashSet<Integer> set = new HashSet<>();
+        tour.add(0);
+        set.add(0);
+        int index = 0;
+        while(set.size() != TaskTsp.CITIES.length){
+            double min = Double.MAX_VALUE;
+            int point = -1;
+            for(int i = 0; i < TaskTsp.CITIES.length; i++){
+                if(i != index && !set.contains(i) && TaskTsp.DISTANCES[index][i] < min){
+                    min = TaskTsp.DISTANCES[index][i];
+                    point = i;
+                }
+            }
+            if(point != -1){
+                tour.add(point);
+                set.add(point);
+                index = point;
+            }
         }
         return TaskTsp.tourDistance(tour);
     }
