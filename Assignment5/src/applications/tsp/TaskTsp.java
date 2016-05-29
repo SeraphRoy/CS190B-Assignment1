@@ -15,6 +15,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.rmi.RemoteException;
+import java.util.function.Consumer;
 
 public class TaskTsp extends Task<List<Integer>>{
 
@@ -55,7 +56,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     static final public double[][] DISTANCES = initializeDistances();
     private List<Integer> shortestTour = new ArrayList<Integer>();
-
+    double shortestDistance;
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
     public TaskTsp(List<Argument> list, Continuation cont){
@@ -109,22 +110,35 @@ public class TaskTsp extends Task<List<Integer>>{
         // initial value for shortestTour and its distance.
         for(int i = 0; i < CITIES.length; i++)
             shortestTour.add(i);
-
-        List<List<Integer>> allPermute = new ArrayList<>();
+        shortestDistance = tourDistance(shortestTour);
         final long taskStartTime = System.nanoTime();
-        iterate(partialCityList, 0, allPermute);
+        iterate(partialCityList, 0, p -> consumePermutation(p));
         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
         Logger.getLogger( ComputerImpl.class.getCanonicalName() )
             .log( Level.INFO, "Task Side: Task {0}Task time: {1} ms.", new Object[]{ this, taskRunTime } );
-        for(List<Integer> tour : allPermute){
-            List<Integer> newTour = new ArrayList<>(tour);
-            newTour = addPrefix(newTour);
-            double currentDistance = tourDistance(newTour);
-            double shortestDistance = tourDistance(shortestTour);
-            if(currentDistance < shortestDistance)
-                shortestTour = newTour;
-        }
+        // for(List<Integer> tour : allPermute){
+        //     List<Integer> newTour = new LinkedList<>(tour);
+        //     newTour = addPrefix(newTour);
+        //     double currentDistance = tourDistance(newTour);
+        //     if(currentDistance < shortestDistance){
+        //         shortestTour = newTour;
+        //         shortestDistance = tourDistance(shortestTour);
+        //     }
+        // }
         return shortestTour;
+    }
+
+    private void consumePermutation(final List<Integer> permutation){
+        List<Integer> tour = new ArrayList<>();
+        for(Integer i : (List<Integer>)argumentList.get(0).getValue()){
+            tour.add(i);
+        }
+        tour.addAll(permutation);
+        double tourDistance = tourDistance(tour);
+        if(tourDistance < shortestDistance){
+            shortestTour = tour;
+            shortestDistance = tourDistance;
+        }
     }
 
     @Override
@@ -147,17 +161,18 @@ public class TaskTsp extends Task<List<Integer>>{
         return false;
     }
 
-    private void iterate( List<Integer> permutation, int k, List<List<Integer>> allPermute)
+    private void iterate( List<Integer> permutation, int k, final Consumer<List<Integer>> consumer)
     {
         for( int i = k; i < permutation.size(); i++ )
             {
                 java.util.Collections.swap( permutation, i, k );
-                iterate( permutation, k + 1, allPermute );
+                iterate( permutation, k + 1, consumer);
                 java.util.Collections.swap( permutation, k, i );
             }
         if ( k == permutation.size() - 1 )
             {
-                allPermute.add(new ArrayList(permutation));
+                //allPermute.add(new ArrayList(permutation));
+                consumer.accept(permutation);
             }
     }
 

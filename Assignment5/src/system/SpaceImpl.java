@@ -282,7 +282,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
         public ComputerProxy(Computer computer, int numWorkerProxies){
             this.computer = computer;
-            numWorkerProxies = 2;
+            //numWorkerProxies = 1;
             for ( int id = 0; id < numWorkerProxies; id++ ){
                 WorkerProxy workerProxy = new WorkerProxy(id, computer);
                 workerMap.put( id, workerProxy );
