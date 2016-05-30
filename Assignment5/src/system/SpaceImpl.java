@@ -47,7 +47,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         shareHandler = new ShareHandler(share);
         new Thread(shareHandler).start();
         new Thread(new SpawnResultHandler()).start();
-        new Thread(new ComputerResultHandler()).start();
+        //new Thread(new ComputerResultHandler()).start();
     }
 
     // task's argumentList IS already initialized
@@ -357,19 +357,15 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
             @Override
             public void run(){
-                long taskStartTime = 0;
-                long taskEndTime = 0;
-                long totalExecuteTime = 0;
-                long totalWaitingTime = 0;
                 while (true){
                     Task task = null;
                     try{
                         task = SpaceImpl.this.takeReady();
-                        taskStartTime = System.nanoTime();
-                        totalWaitingTime += ((taskStartTime - taskEndTime) / 1000000);
+                        final long taskStartTime = System.nanoTime();
                         computer.Execute(task, SpaceImpl.this);
-                        taskEndTime = System.nanoTime();
-                        totalExecuteTime += ((taskEndTime - taskStartTime) / 1000000);
+                        final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+                        //Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+                        //    .log( Level.INFO, "Worker Proxy Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
                     }
                     catch(RemoteException ignore){
                         unregister( task, computer, id );
@@ -380,8 +376,6 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                         Logger.getLogger( this.getClass().getName() )
                             .log( Level.INFO, null, ex );
                     }
-                    //System.out.println("totalWaitingTime: " + totalWaitingTime);
-                    //System.out.println("totalExecuteTime " + totalExecuteTime);
                 }
             }
         }

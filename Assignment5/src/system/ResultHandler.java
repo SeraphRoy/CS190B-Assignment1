@@ -40,12 +40,12 @@ public class ResultHandler implements Runnable{
                 e.printStackTrace();
             }
             result.process(space);
-            try{
-                space.putDoneTask(result.task);
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
+            // try{
+            //     space.putDoneTask(result.task);
+            // }
+            // catch(Exception e){
+            //     e.printStackTrace();
+            // }
         }
     }
 }

@@ -23,10 +23,9 @@ public class Core implements Runnable{
     }
 
     public void run(){
-        new Thread(new ResultHandler(resultQ)).start();
+        //new Thread(new ResultHandler(resultQ)).start();
         while(true){
             try{
-                final long taskStartTime = System.nanoTime();
                 Task task = null;
                 task = readyTasks.take();
                 task.computer = this.computer;
@@ -42,9 +41,6 @@ public class Core implements Runnable{
                 synchronized (readyTasks){
                     readyTasks.notify();
                 }
-                final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-                Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-                    .log( Level.INFO, "Core Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
             }
             catch(InterruptedException e){
                 e.printStackTrace();

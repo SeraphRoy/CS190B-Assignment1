@@ -6,6 +6,7 @@ import java.util.stream.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.util.logging.Level;
@@ -21,21 +22,8 @@ public class TaskTsp extends Task<List<Integer>>{
 
     static final private int NUM_PIXALS = 600;
 
-    static final public double[][] CITIES =
-    {
-        { 1, 1 },
-        { 8, 1 },
-        { 8, 8 },
-        { 1, 8 },
-        { 2, 2 },
-        { 7, 2 },
-        { 7, 7 },
-        { 2, 7 },
-        { 3, 3 },
-        { 6, 3 },
-        { 6, 6 },
-        { 3, 6 }
-
+    static final public double[][] CITIES = makeGraph(13, 0);
+        //{
         // { 1, 1 },
         // { 8, 1 },
         // { 8, 8 },
@@ -47,12 +35,25 @@ public class TaskTsp extends Task<List<Integer>>{
         // { 3, 3 },
         // { 6, 3 },
         // { 6, 6 },
-        // { 3, 6 },
-        // { 4, 4 },
-        // { 5, 4 },
-        // { 5, 5 },
-        // { 4, 5 }
-    };
+        // { 3, 6 }
+
+    //     { 1, 1 },
+    //     { 8, 1 },
+    //     { 8, 8 },
+    //     { 1, 8 },
+    //     { 2, 2 },
+    //     { 7, 2 },
+    //     { 7, 7 },
+    //     { 2, 7 },
+    //     { 3, 3 },
+    //     { 6, 3 },
+    //     { 6, 6 },
+    //     { 3, 6 },
+    //     { 4, 4 },
+    //     { 5, 4 },
+    //     { 5, 5 },
+    //     { 4, 5 }
+    // };
 
     static final public double[][] DISTANCES = initializeDistances();
     private List<Integer> shortestTour = new ArrayList<Integer>();
@@ -67,6 +68,17 @@ public class TaskTsp extends Task<List<Integer>>{
     public TaskTsp(List<Argument> list){
         super(list);
         argc = 2;
+    }
+
+    static public double[][] makeGraph( int numCities, int seed )
+    {
+        Random random = new Random( seed );
+        double[][] graph = new double[ numCities ][ 2 ];
+        for ( int city = 0; city < numCities; city++ )
+            {
+                graph[ city ] = new double[] { random.nextFloat(), random.nextFloat() };
+            }
+        return graph;
     }
 
     @Override
