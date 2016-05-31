@@ -362,8 +362,11 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     try{
                         task = SpaceImpl.this.takeReady();
                         final long taskStartTime = System.nanoTime();
-                        computer.Execute(task, SpaceImpl.this);
+                        ResultWrapper result = computer.Execute(task);
+                        //System.gc();
                         final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+                        if(result != null)
+                            result.process(SpaceImpl.this);
                         //Logger.getLogger( ComputerImpl.class.getCanonicalName() )
                         //    .log( Level.INFO, "Worker Proxy Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
                     }

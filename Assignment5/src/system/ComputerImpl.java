@@ -36,18 +36,19 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         //     new Thread(new ResultHandler(resultQ)).start();
     }
 
-    public void Execute(Task task, Space space) throws RemoteException{
+    public ResultWrapper Execute(Task task) throws RemoteException{
         numTasks++;
+        ResultWrapper result = null;
         try{
             final long taskStartTime = System.nanoTime();
             task.computer = this;
             task.share = new Share(share.getValue());
-            ResultWrapper result = task.execute(true);
+            result = task.execute(true);
             final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
              Logger.getLogger( ComputerImpl.class.getCanonicalName() )
                  .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
-            if(result != null)
-                result.process(space);
+            // if(result != null)
+            //     result.process(space);
                 //resultQ.put(result);
             //if(tasksQ.size() == 0)
             // tasksQ.put(task);
@@ -60,6 +61,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         catch(Exception e){
             e.printStackTrace();
         }
+        return result;
     }
 
     public synchronized Share getShare(){return share;}

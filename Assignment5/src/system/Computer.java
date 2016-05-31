@@ -9,7 +9,7 @@ import api.*;
 
 public interface Computer extends Remote{
 
-    public void Execute(Task task, Space space) throws RemoteException;
+    public ResultWrapper Execute(Task task) throws RemoteException;
 
     //public void Execute(List<Task> tasks, Space space) throws RemoteException;
 

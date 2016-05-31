@@ -114,10 +114,10 @@ public class TaskTsp extends Task<List<Integer>>{
 
     @Override
     public List<Integer> generateArgument(){
-        List<Integer> partialCityList = new ArrayList<>();
-        for(Integer i : (List<Integer>)argumentList.get(1).getValue()){
-            partialCityList.add(i);
-        }
+        List<Integer> partialCityList = new ArrayList<>((List<Integer>)argumentList.get(1).getValue());
+        // for(Integer i : (List<Integer>)argumentList.get(1).getValue()){
+        //     partialCityList.add(i);
+        // }
         //List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
         // initial value for shortestTour and its distance.
         for(int i = 0; i < CITIES.length; i++)
@@ -141,10 +141,10 @@ public class TaskTsp extends Task<List<Integer>>{
     }
 
     private void consumePermutation(final List<Integer> permutation){
-        List<Integer> tour = new ArrayList<>();
-        for(Integer i : (List<Integer>)argumentList.get(0).getValue()){
-            tour.add(i);
-        }
+        List<Integer> tour = new ArrayList<>((List<Integer>)argumentList.get(0).getValue());
+        // for(Integer i : (List<Integer>)argumentList.get(0).getValue()){
+        //     tour.add(i);
+        // }
         tour.addAll(permutation);
         double tourDistance = tourDistance(tour);
         if(tourDistance < shortestDistance){
