@@ -18,7 +18,7 @@ public abstract class Task<T> implements Serializable{
 
     public Computer computer;
 
-    final protected List<Argument> argumentList;
+    final protected List<Argument<T>> argumentList;
 
     protected Continuation cont;
 
@@ -28,7 +28,7 @@ public abstract class Task<T> implements Serializable{
 
     public Share share;
 
-    public Task(List<Argument> list, Continuation cont){
+    public Task(List<Argument<T>> list, Continuation cont){
         this.argumentList = list;
         this.cont = cont;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
@@ -36,7 +36,7 @@ public abstract class Task<T> implements Serializable{
         this.share = null;
     }
 
-    public Task(List<Argument> list){
+    public Task(List<Argument<T>> list){
         this.argumentList = list;
         this.cont = null;
         this.id = java.util.UUID.randomUUID().getLeastSignificantBits();
@@ -116,7 +116,7 @@ public abstract class Task<T> implements Serializable{
         return true;
     }
 
-    public List<Argument> getArgumentList(){return argumentList;}
+    public List<Argument<T>> getArgumentList(){return argumentList;}
 
     public Continuation getCont(){return cont;}
 

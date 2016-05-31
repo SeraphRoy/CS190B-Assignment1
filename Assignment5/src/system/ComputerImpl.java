@@ -30,7 +30,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
     private Share share = null;
 
     public ComputerImpl() throws RemoteException{
-        resultQ = new LinkedBlockingQueue<>();
+        //resultQ = new LinkedBlockingQueue<>();
         coreNum = Runtime.getRuntime().availableProcessors();
         // for(int i = 0; i < coreNum; i++)
         //     new Thread(new ResultHandler(resultQ)).start();

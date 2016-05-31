@@ -60,12 +60,12 @@ public class TaskTsp extends Task<List<Integer>>{
     double shortestDistance;
     //list[0] is a list of fixed cities
     //list[1] is a list of partial cities
-    public TaskTsp(List<Argument> list, Continuation cont){
+    public TaskTsp(List<Argument<List<Integer>>> list, Continuation cont){
         super(list, cont);
         argc = 2;
     }
 
-    public TaskTsp(List<Argument> list){
+    public TaskTsp(List<Argument<List<Integer>>> list){
         super(list);
         argc = 2;
     }
@@ -83,25 +83,25 @@ public class TaskTsp extends Task<List<Integer>>{
 
     @Override
     public SpawnResult spawn() throws RemoteException, InterruptedException{
-        List<Integer> tempList = (List<Integer>)argumentList.get(1).getValue();
+        List<Integer> tempList = argumentList.get(1).getValue();
         Task t = new TaskCompose(new ArrayList<Argument>(), cont, tempList.size());
         t.computer = this.computer;
         t.share = new Share(this.computer.getShare().getValue());
         List<Task> list = new ArrayList<>();
-        for(int i : (List<Integer>)argumentList.get(1).getValue()){
+        for(int i : argumentList.get(1).getValue()){
             List<Integer> fixedList = new ArrayList<>();
             List<Integer> partialList = new ArrayList<>();
-            for(int j : (List<Integer>)argumentList.get(0).getValue()){
+            for(int j : argumentList.get(0).getValue()){
                 fixedList.add(j);
             }
-            for(int a : (List<Integer>)argumentList.get(1).getValue()){
+            for(int a : argumentList.get(1).getValue()){
                 if(a != i)
                     partialList.add(a);
             }
             fixedList.add(i);
             Argument argument0 = new Argument(fixedList, 0);
             Argument argument1 = new Argument(partialList, 1);
-            List<Argument> newList = new ArrayList<>();
+            List<Argument<List<Integer>>> newList = new ArrayList<>();
             newList.add(argument0);
             newList.add(argument1);
             Task subTask = new TaskTsp(newList);
@@ -114,7 +114,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     @Override
     public List<Integer> generateArgument(){
-        List<Integer> partialCityList = new ArrayList<>((List<Integer>)argumentList.get(1).getValue());
+        List<Integer> partialCityList = new ArrayList<>(argumentList.get(1).getValue());
         // for(Integer i : (List<Integer>)argumentList.get(1).getValue()){
         //     partialCityList.add(i);
         // }
@@ -141,7 +141,7 @@ public class TaskTsp extends Task<List<Integer>>{
     }
 
     private void consumePermutation(final List<Integer> permutation){
-        List<Integer> tour = new ArrayList<>((List<Integer>)argumentList.get(0).getValue());
+        List<Integer> tour = new ArrayList<>(argumentList.get(0).getValue());
         // for(Integer i : (List<Integer>)argumentList.get(0).getValue()){
         //     tour.add(i);
         // }
@@ -161,7 +161,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     @Override
     public boolean needToCompute(){
-        List<Integer> partialCityList = (List<Integer>)argumentList.get(1).getValue();
+        List<Integer> partialCityList = argumentList.get(1).getValue();
         return partialCityList.size() < 10;
     }
 
@@ -190,7 +190,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     private double getLowerBound(){
         // partial tour for now
-        List<Integer> tour = (List<Integer>)argumentList.get(0).getValue();
+        List<Integer> tour = argumentList.get(0).getValue();
         double cost = 0;
         for ( int city = 0; city < tour.size() - 1; city ++ )
             {
@@ -201,7 +201,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     private List<Integer> addPrefix( List<Integer> partialTour )
     {
-        for(int i : (List<Integer>)argumentList.get(0).getValue()){
+        for(int i : argumentList.get(0).getValue()){
             partialTour.add(0, i);
         }
         return partialTour;
