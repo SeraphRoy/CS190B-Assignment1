@@ -84,7 +84,7 @@ public class TaskTsp extends Task<List<Integer>>{
     @Override
     public SpawnResult spawn() throws RemoteException, InterruptedException{
         List<Integer> tempList = argumentList.get(1).getValue();
-        Task t = new TaskCompose(new ArrayList<Argument>(), cont, tempList.size());
+        Task t = new TaskCompose(new ArrayList<Argument<List<Integer>>>(), cont, tempList.size());
         t.computer = this.computer;
         t.share = new Share(this.computer.getShare().getValue());
         List<Task> list = new ArrayList<>();

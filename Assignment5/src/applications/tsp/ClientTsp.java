@@ -22,7 +22,7 @@ public class ClientTsp extends Client{
             partialList.add(i);
         Argument argument0 = new Argument(fixedList, 0);
         Argument argument1 = new Argument(partialList, 1);
-        List<Argument> list = new ArrayList<>();
+        List<Argument<List<Integer>>> list = new ArrayList<>();
         list.add(argument0);
         list.add(argument1);
         Continuation cont = new Continuation(-1, 0);

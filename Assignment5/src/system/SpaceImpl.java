@@ -17,10 +17,12 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.HashSet;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class SpaceImpl extends UnicastRemoteObject implements Space{
     private static int computerIds = 0;
-    protected BlockingQueue<Closure> readyClosure;
+    protected BlockingDeque<Closure> readyClosure;
     protected BlockingQueue<Closure> spaceClosure;
     private ConcurrentHashMap<Long, Closure> waitingClosure;
     private LinkedBlockingQueue<Argument> resultQueue;
@@ -36,7 +38,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     private Share share = null;
 
     public SpaceImpl(Share share) throws RemoteException{
-        readyClosure = new LinkedBlockingQueue<Closure>();
+        readyClosure = new LinkedBlockingDeque<Closure>();
         spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
         resultQueue = new LinkedBlockingQueue<>();
@@ -124,7 +126,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public Task takeReady() throws RemoteException, InterruptedException{
-        return readyClosure.take().getTask();
+        return readyClosure.takeFirst().getTask();
     }
 
     public Argument getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
@@ -215,7 +217,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     else{
                         Closure closure = new Closure(task.getArgc(), task);
-                        readyClosure.put(closure);
+                        readyClosure.putFirst(closure);
                     }
                 }
                 catch(InterruptedException e){
