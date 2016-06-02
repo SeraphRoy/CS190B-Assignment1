@@ -373,7 +373,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                     }
                     catch(RemoteException ignore){
                         unregister( task, computer, id );
-                        ignore.printStackTrace();
+                        //ignore.printStackTrace();
                         return;
                     }
                     catch (InterruptedException ex){

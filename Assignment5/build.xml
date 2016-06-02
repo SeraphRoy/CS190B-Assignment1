@@ -11,8 +11,8 @@
 <property name="dist" location="dist"/>
 <property name="documents" location="documents"/>
 
-<property name="servername" value="hobbes.cs.ucsb.edu" />
-<property name="projdir" value="~/Downloads/cs290bHw4-master/cs290bHw4" />
+<property name="servername" value="cartman.cs.ucsb.edu" />
+<property name="projdir" value="~/Java-Centric-Cluster-and-Concurrent-Computing/Assignment5" />
 <property name="host1" value="yogi.cs.ucsb.edu"/>
 <property name="host2" value="linus.cs.ucsb.edu"/>
 <property name="host3" value="dizzy.cs.ucsb.edu"/>
