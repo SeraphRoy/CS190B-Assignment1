@@ -140,8 +140,8 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
                 try{
                     computer.updateShare(share);
                 }
-                catch(Exception e){
-                    e.printStackTrace();
+                catch(Exception ignore){
+                    //ignore.printStackTrace();
                 }
             });
     }

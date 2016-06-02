@@ -28,6 +28,10 @@ public abstract class Task<T> implements Serializable{
 
     public Share share;
 
+    public long parent_T_1 = 0;
+
+    public long parent_T_Inf = 0;
+
     public Task(List<Argument<T>> list, Continuation cont){
         this.argumentList = list;
         this.cont = cont;
@@ -57,6 +61,8 @@ public abstract class Task<T> implements Serializable{
                     result.T_1 += taskRunTime;
                     result.T_Inf += taskRunTime;
                     if(this instanceof ComposeTask){
+                        result.T_1 += this.parent_T_1;
+                        result.T_Inf += this.parent_T_Inf;
                         long max = -1;
                         for(Argument argument : argumentList){
                             result.T_1 += argument.T_1;
@@ -84,8 +90,8 @@ public abstract class Task<T> implements Serializable{
                     SpawnResult spawnResult  = spawn();
                     result = new ResultWrapper(2, spawnResult, this);
                     final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-                    result.T_1 += taskRunTime;
-                    result.T_Inf += taskRunTime;
+                    spawnResult.successor.parent_T_1 += taskRunTime;
+                    spawnResult.successor.parent_T_Inf += taskRunTime;
                     return result;
                 }
                 catch(Exception e){
