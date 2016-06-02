@@ -49,9 +49,9 @@ public class TaskTsp extends Task<List<Integer>>{
         { 6, 3 },
         { 6, 6 },
         { 3, 6 },
-        { 4, 4 },
-        { 5, 4 }
-        //{ 5, 5 },
+        { 4, 4 }
+        //{ 5, 4 },
+        //{ 5, 5 }
         //{ 4, 5 }
     };
 

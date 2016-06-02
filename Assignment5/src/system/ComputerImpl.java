@@ -41,7 +41,10 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         ResultWrapper result = null;
         try{
             task.computer = this;
-            task.share = new Share(share.getValue());
+	    if(share != null)
+		task.share = new Share(share.getValue());
+	    else
+		share = new Share(task.share.getValue());
             result = task.execute(true);
              // Logger.getLogger( ComputerImpl.class.getCanonicalName() )
              //     .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );

@@ -37,7 +37,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
 
     private Share share = null;
 
-    public SpaceImpl(Share share) throws RemoteException{
+    public SpaceImpl() throws RemoteException{
         readyClosure = new LinkedBlockingDeque<Closure>();
         spaceClosure = new LinkedBlockingQueue<Closure>();
         waitingClosure = new ConcurrentHashMap<>();
@@ -45,8 +45,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         computerResults = new LinkedBlockingQueue<>();
         doneTasks = new HashSet<>();
         spawnResultQ = new LinkedBlockingQueue<>();
-        this.share = share;
-        shareHandler = new ShareHandler(share);
+        shareHandler = new ShareHandler();
         new Thread(shareHandler).start();
         new Thread(new SpawnResultHandler()).start();
         //new Thread(new ComputerResultHandler()).start();
@@ -118,7 +117,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public void register(Computer computer, int numProcessors) throws RemoteException, InterruptedException{
-        computer.setShare(new Share(this.share.getValue()));
+        //computer.setShare(new Share(this.share.getValue()));
         ComputerProxy c = new ComputerProxy(computer, 2 * numProcessors);
         computerProxies.put( computer, c);
         c.startWorkerProxies();
@@ -132,7 +131,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     public Argument getResult() throws RemoteException, InterruptedException{return resultQueue.take();}
 
     public synchronized void updateShare(Share share) throws RemoteException{
-        this.share = share.getBetterOne(this.share);
+	if(this.share == null)
+	    this.share = new Share(share.getValue());
+	else
+	    this.share = share.getBetterOne(this.share);
         System.out.println("The space share is: " + share.getValue());
         computerProxies.keySet().forEach(computer -> {
                 try{
@@ -163,8 +165,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
             System.setSecurityManager(new SecurityManager());
         try{
             Registry registry = LocateRegistry.createRegistry(Space.PORT);
-            Share share = new Share(Double.MAX_VALUE);
-            SpaceImpl space = new SpaceImpl(share);
+            SpaceImpl space = new SpaceImpl();
             new Thread(space.createExecuter()).start();
             registry.rebind(Space.SERVICE_NAME, space);
             System.out.println("Space start");
@@ -175,12 +176,10 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
     }
 
     public class ShareHandler implements Runnable{
-        private Share share;
+        private Share share = null;
         private AtomicBoolean needToUpdate = new AtomicBoolean(false);
 
-        public ShareHandler(Share share){
-            this.share = share;
-        }
+        public ShareHandler(){}
 
         public synchronized void updateShare(Share share){
             this.share = share;
@@ -190,7 +189,7 @@ public class SpaceImpl extends UnicastRemoteObject implements Space{
         public void run(){
             while(true){
                 if(needToUpdate.get()){
-                    if(share.isBetterThan(SpaceImpl.this.share)){
+                    if(SpaceImpl.this.share == null || share.isBetterThan(SpaceImpl.this.share)){
                         try{
                             SpaceImpl.this.updateShare(share);
                         }
