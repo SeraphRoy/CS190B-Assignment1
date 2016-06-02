@@ -47,12 +47,12 @@
     <Compile srcdir="${src}" destdir="${build}" />
   </target>
 
-  <target name="runSpace" depends="compile" description="run the space">
+  <target name="runSpace" depends="jar" description="run the space">
     <java classname="system.SpaceImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
       <classpath>
-        <pathelement location="${build}"/>
+        <pathelement location="dist/all.jar"/>
       </classpath>
     </java>
   </target>
@@ -72,7 +72,7 @@
     <java classname="applications.tsp.ClientTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
       <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
-      <arg value="${servername}" />
+      <arg value="localhost" />
       <classpath>
         <pathelement location="dist/all.jar"/>
       </classpath>
