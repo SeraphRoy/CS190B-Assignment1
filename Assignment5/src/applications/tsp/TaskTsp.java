@@ -22,8 +22,8 @@ public class TaskTsp extends Task<List<Integer>>{
 
     static final private int NUM_PIXALS = 600;
 
-    static final public double[][] CITIES = makeGraph(14, 0);
-        //{
+    static final public double[][] CITIES = //makeGraph(14, 0);
+        {
         // { 1, 1 },
         // { 8, 1 },
         // { 8, 8 },
@@ -37,23 +37,23 @@ public class TaskTsp extends Task<List<Integer>>{
         // { 6, 6 },
         // { 3, 6 }
 
-    //     { 1, 1 },
-    //     { 8, 1 },
-    //     { 8, 8 },
-    //     { 1, 8 },
-    //     { 2, 2 },
-    //     { 7, 2 },
-    //     { 7, 7 },
-    //     { 2, 7 },
-    //     { 3, 3 },
-    //     { 6, 3 },
-    //     { 6, 6 },
-    //     { 3, 6 },
-    //     { 4, 4 },
-    //     { 5, 4 },
-    //     { 5, 5 },
-    //     { 4, 5 }
-    // };
+        { 1, 1 },
+        { 8, 1 },
+        { 8, 8 },
+        { 1, 8 },
+        { 2, 2 },
+        { 7, 2 },
+        { 7, 7 },
+        { 2, 7 },
+        { 3, 3 },
+        { 6, 3 },
+        { 6, 6 },
+        { 3, 6 },
+        { 4, 4 },
+        { 5, 4 }
+        //{ 5, 5 },
+        //{ 4, 5 }
+    };
 
     static final public double[][] DISTANCES = initializeDistances();
     private List<Integer> shortestTour = new ArrayList<Integer>();
