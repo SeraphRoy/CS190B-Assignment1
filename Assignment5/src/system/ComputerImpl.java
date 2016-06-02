@@ -40,23 +40,11 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
         numTasks++;
         ResultWrapper result = null;
         try{
-            final long taskStartTime = System.nanoTime();
             task.computer = this;
             task.share = new Share(share.getValue());
             result = task.execute(true);
-            final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
-             Logger.getLogger( ComputerImpl.class.getCanonicalName() )
-                 .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
-            // if(result != null)
-            //     result.process(space);
-                //resultQ.put(result);
-            //if(tasksQ.size() == 0)
-            // tasksQ.put(task);
-            // if(tasksQ.size() > SpaceImpl.preFetchNum)
-            //     //if(tasksQ.size() > 30)
-            //     synchronized(tasksQ){
-            //         tasksQ.wait();
-            //     }
+             // Logger.getLogger( ComputerImpl.class.getCanonicalName() )
+             //     .log( Level.INFO, "Computer Side: Task {0}Task time: {1} ms.", new Object[]{ task, taskRunTime } );
         }
         catch(Exception e){
             e.printStackTrace();

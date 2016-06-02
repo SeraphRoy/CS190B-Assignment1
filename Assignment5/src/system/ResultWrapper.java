@@ -15,6 +15,10 @@ public class ResultWrapper<T> implements java.io.Serializable{
 
     public boolean needToUpdate = false;
 
+    public long T_1 = 0;
+
+    public long T_Inf = 0;
+
     public ResultWrapper(int type, SpawnResult spawnResult, Task task){
         this.type = type;
         this.spawnResult = spawnResult;
@@ -29,6 +33,7 @@ public class ResultWrapper<T> implements java.io.Serializable{
     }
 
     public void process(Space space){
+        // skip by branch and bound
         if(type == 0){
             try{
                 space.sendArgument(cont);
@@ -38,14 +43,19 @@ public class ResultWrapper<T> implements java.io.Serializable{
                 e.printStackTrace();
             }
         }
+        // do actual calculation and send argument to successor
         else if(type == 1){
             try{
                 if(!needToUpdate){
                     Argument argument = new Argument(result, cont.getSlot());
+                    argument.T_1 += this.T_1;
+                    argument.T_Inf += this.T_Inf;
                     space.sendArgument(cont, argument);
                 }
                 else{
                     Argument argument = new Argument(result, cont.getSlot());
+                    argument.T_1 += this.T_1;
+                    argument.T_Inf += this.T_Inf;
                     space.sendArgument(cont, argument, new Share(task.generateShareValue(result)));
                 }
             }
@@ -54,6 +64,7 @@ public class ResultWrapper<T> implements java.io.Serializable{
                 e.printStackTrace();
             }
         }
+        // divided into sub-tasks
         else{
             try{
                 space.putSpawnResult(spawnResult);

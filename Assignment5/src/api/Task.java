@@ -48,10 +48,24 @@ public abstract class Task<T> implements Serializable{
     public ResultWrapper execute(boolean updateComputerShare){
         ResultWrapper result = null;
         if(needToProceed()){
+            final long taskStartTime = System.nanoTime();
             if(needToCompute()){
                 T o = generateArgument();
                 try{
                     result = new ResultWrapper(1, cont, o, this);
+                    final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+                    result.T_1 += taskRunTime;
+                    result.T_Inf += taskRunTime;
+                    if(this instanceof ComposeTask){
+                        long max = -1;
+                        for(Argument argument : argumentList){
+                            result.T_1 += argument.T_1;
+                            if(argument.T_Inf > max)
+                                max = argument.T_Inf;
+                        }
+                        result.T_Inf += max;
+                    }
+
                     Comparable comp = generateShareValue(o);
                     Share newShare = new Share(comp);
                     if(newShare.isBetterThan(this.share) && updateComputerShare){
@@ -69,6 +83,9 @@ public abstract class Task<T> implements Serializable{
                 try{
                     SpawnResult spawnResult  = spawn();
                     result = new ResultWrapper(2, spawnResult, this);
+                    final long taskRunTime = ( System.nanoTime() - taskStartTime ) / 1000000;
+                    result.T_1 += taskRunTime;
+                    result.T_Inf += taskRunTime;
                     return result;
                 }
                 catch(Exception e){
