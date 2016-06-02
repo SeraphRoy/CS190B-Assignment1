@@ -14,7 +14,7 @@ public class ClientTsp extends Client{
     }
 
     public static void main(String[] args) throws Exception{
-        Client c = new ClientTsp(null, "localhost");
+        Client c = new ClientTsp(null, args[0]);
         List<Integer> fixedList = new ArrayList<>();
         List<Integer> partialList = new ArrayList<>();
         fixedList.add(0);

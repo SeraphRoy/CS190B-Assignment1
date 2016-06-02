@@ -65,7 +65,7 @@ public class ComputerImpl extends UnicastRemoteObject implements Computer{
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException{
         SpaceImpl.MULTICORE = true;
         SpaceImpl.preFetchNum = 10;
-        final String domainName = "localhost";
+        final String domainName = args[0];
         System.setSecurityManager( new SecurityManager() );
         final String url = "rmi://" + domainName + ":" + Space.PORT + "/" + Space.SERVICE_NAME;
         final Space space = (Space) Naming.lookup(url);

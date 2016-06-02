@@ -22,7 +22,7 @@ public class TaskTsp extends Task<List<Integer>>{
 
     static final private int NUM_PIXALS = 600;
 
-    static final public double[][] CITIES = makeGraph(13, 0);
+    static final public double[][] CITIES = makeGraph(14, 0);
         //{
         // { 1, 1 },
         // { 8, 1 },
@@ -162,7 +162,7 @@ public class TaskTsp extends Task<List<Integer>>{
     @Override
     public boolean needToCompute(){
         List<Integer> partialCityList = argumentList.get(1).getValue();
-        return partialCityList.size() < 10;
+        return partialCityList.size() < 11;
     }
 
     @Override

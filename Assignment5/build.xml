@@ -7,8 +7,7 @@
   <property name="javadoc" location="documents/javadoc" />
   <property name="compile.debug" value="true" />
   <property name="dist" location="dist" />
-  <property name="arg0" value="true" />
-  <property name="arg1" value="20" />
+  <property name="servername" value="hobbes.cs.ucsb.edu" />
   
   <macrodef name="Compile">
     <attribute name="srcdir" />
@@ -51,8 +50,7 @@
   <target name="runSpace" depends="compile" description="run the space">
     <java classname="system.SpaceImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
-      <arg value="${arg0}" />
-      <arg value="${arg1}" />
+      <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
       <classpath>
         <pathelement location="${build}"/>
       </classpath>
@@ -62,8 +60,8 @@
   <target name="runComputer" depends="jar" description="start a computer">
     <java classname="system.ComputerImpl" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
-      <arg value="${arg0}" />
-      <arg value="${arg1}" />
+      <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
+      <arg value="${servername}" />
       <classpath>
         <pathelement location="dist/all.jar"/>
       </classpath>
@@ -73,8 +71,8 @@
   <target name="runClientTsp" depends="jar" description="run tsp">
     <java classname="applications.tsp.ClientTsp" fork="true">
       <jvmarg value="-Djava.security.policy=policy"/>
-      <arg value="${arg0}" />
-      <arg value="${arg1}" />
+      <jvmarg value="-Djava.rmi.server.useCodebaseOnly=false" />
+      <arg value="${servername}" />
       <classpath>
         <pathelement location="dist/all.jar"/>
       </classpath>
