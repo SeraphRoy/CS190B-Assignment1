@@ -40,8 +40,8 @@ public class TaskTsp extends Task<List<Integer>>{
 
         //{ 1, 1 },
         //{ 8, 1 },
-        //{ 8, 8 },
-        //{ 1, 8 },
+        { 8, 8 },
+        { 1, 8 },
         { 2, 2 },
         { 7, 2 },
         { 7, 7 },
@@ -204,47 +204,47 @@ public class TaskTsp extends Task<List<Integer>>{
         //         cost += DISTANCES[ tour.get( city ) ][ tour.get( city + 1 ) ];
         //     }
         // return cost;
-	List<Integer> fixTour = argumentList.get(0).getValue();
-	double result = 0;
-	HashSet<Integer> ajacent = new HashSet<>();
-	for(int i = 0; i < DISTANCES.length; i++){
-	    int count = 2;
-	    int index = fixTour.indexOf(i);
-	    if(fixTour.size() != 1 && index != -1){
-		if(index == fixTour.size() - 1){
-		    result += DISTANCES[i][fixTour.get(index-1)];
-		    ajacent.add(fixTour.get(index-1));
-		}
-		else if(index == 0){
-		    result += DISTANCES[i][fixTour.get(index+1)];
-		    ajacent.add(fixTour.get(index+1));
-		}
-		else{
-		    double previous = DISTANCES[i][fixTour.get(index-1)];
-		    double after = DISTANCES[i][fixTour.get(index+1)];
-		    result += previous;
-		    result += after;
-		    count -= 1;
-		    ajacent.add(fixTour.get(index+1));
-		    ajacent.add(fixTour.get(index-1));
-		}
-		count -= 1;
-	    }
-	    for(int times = 0; times < count; times++){
-		double min = Double.MAX_VALUE;
-		int minCity = i;
-		for(int j = 0; j < DISTANCES.length; j++){
-		    if(i != j && !ajacent.contains(j) && DISTANCES[i][j] < min){
-			min = DISTANCES[i][j];
-			minCity = j;
-		    }
-		}
-		result += min;
-		ajacent.add(minCity);
-	    }
-	    ajacent.clear();
-	}
-	return result/2;
+        List<Integer> fixTour = argumentList.get(0).getValue();
+        double result = 0;
+        HashSet<Integer> ajacent = new HashSet<>();
+        for(int i = 0; i < DISTANCES.length; i++){
+            int count = 2;
+            int index = fixTour.indexOf(i);
+            if(fixTour.size() != 1 && index != -1){
+                if(index == fixTour.size() - 1){
+                    result += DISTANCES[i][fixTour.get(index-1)];
+                    ajacent.add(fixTour.get(index-1));
+                }
+                else if(index == 0){
+                    result += DISTANCES[i][fixTour.get(index+1)];
+                    ajacent.add(fixTour.get(index+1));
+                }
+                else{
+                    double previous = DISTANCES[i][fixTour.get(index-1)];
+                    double after = DISTANCES[i][fixTour.get(index+1)];
+                    result += previous;
+                    result += after;
+                    count -= 1;
+                    ajacent.add(fixTour.get(index+1));
+                    ajacent.add(fixTour.get(index-1));
+                }
+                count -= 1;
+            }
+            for(int times = 0; times < count; times++){
+                double min = Double.MAX_VALUE;
+                int minCity = i;
+                for(int j = 0; j < DISTANCES.length; j++){
+                    if(i != j && !ajacent.contains(j) && DISTANCES[i][j] < min){
+                        min = DISTANCES[i][j];
+                        minCity = j;
+                    }
+                }
+                result += min;
+                ajacent.add(minCity);
+            }
+            ajacent.clear();
+        }
+        return result/2;
     }
 
     private List<Integer> addPrefix( List<Integer> partialTour )
