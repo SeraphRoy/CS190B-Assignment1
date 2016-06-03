@@ -2,6 +2,11 @@
 
   <body>
     <h1>CS 190B: JAVA-CENTRIC CLUSTER & CONCURRENT COMPUTING (HW05)</h1>
+    <p>The parallel efficiency table is the following: </p>
+    <img src="Graph.png" />
+    <p>It runs too slow for 16 cities so I run it for 14</p>
+    <p>Average parallelism is pretty big; perhaps the cutting threshold should be a little higher than now</p>
+    <p>The overall efficiency is much better than the previous homework, which is a large improvement</p>
     <p>Some improvements after HW4: Implement the space-runnable tasks in the more clever way as presented in the class. Each task has a isSpaceCallable() method which by default return (this instanceof SpaceCallable), where SpaceCallable is a marking interface. Clients can override the method if they want to make that decision at runtime or just take the default.</p>
     <p>Pruning is done before all kinds of execution, including spawning subtasks or doing actual calculation.</p>
     <p>The major design issue is how to maintain the shared object in the space and in the computers. The space should update the shared object asynchronously because updating the share should not interrupt the flow of normal execution. Moreover, the space-callable tasks should not access the shared object on the computer like other normal tasks do because there will be a RMI call for those tasks and thus slow down the whole computation</p>
