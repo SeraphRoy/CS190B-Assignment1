@@ -39,9 +39,9 @@ public class TaskTsp extends Task<List<Integer>>{
         // { 3, 6 }
 
         //{ 1, 1 },
-        { 8, 1 },
-        { 8, 8 },
-        { 1, 8 },
+        //{ 8, 1 },
+        //{ 8, 8 },
+        //{ 1, 8 },
         { 2, 2 },
         { 7, 2 },
         { 7, 7 },
@@ -52,8 +52,8 @@ public class TaskTsp extends Task<List<Integer>>{
         { 3, 6 },
         { 4, 4 },
         { 5, 4 },
-        { 5, 5 }
-        //{ 4, 5 }
+        { 5, 5 },
+        { 4, 5 }
 	};
 
     static final public double[][] DISTANCES = initializeDistances();
@@ -142,15 +142,21 @@ public class TaskTsp extends Task<List<Integer>>{
     }
 
     private void consumePermutation(final List<Integer> permutation){
-        List<Integer> tour = new ArrayList<>(argumentList.get(0).getValue());
+        //List<Integer> tour = new ArrayList<>(argumentList.get(0).getValue());
+        List<Integer> tour = argumentList.get(0).getValue();
         // for(Integer i : (List<Integer>)argumentList.get(0).getValue()){
         //     tour.add(i);
         // }
         tour.addAll(permutation);
         double tourDistance = tourDistance(tour);
         if(tourDistance < shortestDistance){
-            shortestTour = tour;
+            //shortestTour = new ArrayList<Integer>(tour);
+            shortestTour.clear();
+            shortestTour.addAll(tour);
             shortestDistance = tourDistance;
+        }
+        for(int i = 0; i < permutation.size(); i++){
+            tour.remove(tour.size()-1);
         }
     }
 
@@ -163,7 +169,7 @@ public class TaskTsp extends Task<List<Integer>>{
     @Override
     public boolean needToCompute(){
         List<Integer> partialCityList = argumentList.get(1).getValue();
-        return partialCityList.size() < 11;
+        return partialCityList.size() < 13;
     }
 
     @Override
